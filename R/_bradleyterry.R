@@ -65,10 +65,10 @@ myway <- system.time({
 
     ## Run the Zermelo algorithm
     # Cyclic version: see Hunter (2004)
-    set.seed(1)
+    #set.seed(1)
     mu <- runif(n)
     for (iter in 1:100) {
-      message('Iteration ', iter)
+      #message('Iteration ', iter)
       mu_new <- W / rowSums(N / (mu[row(N)] + mu[col(N)]))
       mu_new <- mu_new / sum(mu_new) # renormalise
       mu_new
@@ -78,7 +78,6 @@ myway <- system.time({
       iter <- iter + 1
     }
   }
-
 })
 
 counts <- BradleyTerry2::countsToBinomial(as.matrix(C))
