@@ -46,15 +46,13 @@
 
 ################################### ---------------------------
 
-citations <- BradleyTerry2::citations
 library(Matrix)
-C <- Matrix(citations, nrow(citations), ncol(citations), dimnames = dimnames(citations))
+C <- Matrix(mypackage::citations)
 
-myway <- System.time({
 
+myway <- system.time({
+  # Faster(?) non-glm computation of BT model MLE
   for(rep in 1:1000) {
-    # Faster(?) non-glm computation of BT model MLE
-    C <- Matrix(rpois())
 
     # Ignore self-citations
     diag(C) <- 0
@@ -83,5 +81,17 @@ myway <- System.time({
 
 })
 
-#BT2way <- System.time
+counts <- BradleyTerry2::countsToBinomial(as.matrix(C))
+set.seed(1)
+BT2way <- system.time({
+  for(rep in 1:1000) {
+    fit <- BradleyTerry2::BTm(cbind(win1,win2), player1, player2, data=counts)
+  }
+})
 
+print(myway)
+# user  system elapsed
+# 2.92    0.00    2.92
+print(BT2way)
+# user  system elapsed
+# 46.22    0.41   46.97
