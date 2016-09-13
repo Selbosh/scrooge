@@ -48,4 +48,7 @@ A layered grammar of graphics.
 Other plot constructors: \code{\link{linearScale}},
   \code{\link{logScale}}
 }
+\concept{
+ascii textplot utf8plot unicodeplot
+}
 
