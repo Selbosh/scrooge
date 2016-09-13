@@ -46,32 +46,42 @@
 
 ################################### ---------------------------
 
-# Faster(?) non-glm computation of BT model MLE
 citations <- BradleyTerry2::citations
 library(Matrix)
 C <- Matrix(citations, nrow(citations), ncol(citations), dimnames = dimnames(citations))
 
-# Ignore self-citations
-diag(C) <- 0
-C <- drop0(C)
+myway <- System.time({
 
-# Set up the Zermelo algorithm
-N <- C + t(C) # number of comparisons between i & j
-W <- rowSums(C) # number of 'wins' by i
-n <- nrow(C) # number of competitors
+  for(rep in 1:1000) {
+    # Faster(?) non-glm computation of BT model MLE
+    C <- Matrix(rpois())
 
-## Run the Zermelo algorithm
-# Cyclic version: see Hunter (2004)
-set.seed(1)
-mu <- runif(n)
-for (iter in 1:100) {
-  message('Iteration ', iter)
-  mu_new <- W / rowSums(N / (mu[row(N)] + mu[col(N)]))
-  mu_new <- mu_new / sum(mu_new) # renormalise
-  mu_new
-  if(sum((mu_new - mu)^2) < 1e-3) {
-    break
-  } else mu <- mu_new
-  iter <- iter + 1
-}
+    # Ignore self-citations
+    diag(C) <- 0
+    C <- drop0(C)
+
+    # Set up the Zermelo algorithm
+    N <- C + t(C) # number of comparisons between i & j
+    W <- rowSums(C) # number of 'wins' by i
+    n <- nrow(C) # number of competitors
+
+    ## Run the Zermelo algorithm
+    # Cyclic version: see Hunter (2004)
+    set.seed(1)
+    mu <- runif(n)
+    for (iter in 1:100) {
+      message('Iteration ', iter)
+      mu_new <- W / rowSums(N / (mu[row(N)] + mu[col(N)]))
+      mu_new <- mu_new / sum(mu_new) # renormalise
+      mu_new
+      if(sum((mu_new - mu)^2) < 1e-3) {
+        break
+      } else mu <- mu_new
+      iter <- iter + 1
+    }
+  }
+
+})
+
+#BT2way <- System.time
 

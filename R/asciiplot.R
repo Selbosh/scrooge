@@ -55,7 +55,7 @@ logScale <- function(x, ...) {
 #' \emph{Journal of Computational and Graphical Statistics}
 #' 19(1), 3--28.
 #'
-#' @concepts ascii textplot utf8plot unicodeplot
+#' @concept ascii textplot utf8plot unicodeplot
 #'
 #' @examples
 #' asciiplot(iris, aes=list(x='Sepal.Width', y='Sepal.Length', shape='Species'), geom='point')
