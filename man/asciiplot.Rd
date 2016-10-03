@@ -7,7 +7,7 @@
 \usage{
 asciiplot(df, aes = NULL, geom = NULL)
 
-\method{print}{asciiplot}(ap)
+\method{print}{asciiplot}(x, ...)
 }
 \arguments{
 \item{df}{a data frame, ideally two continuous variables and a factor}
@@ -15,6 +15,10 @@ asciiplot(df, aes = NULL, geom = NULL)
 \item{aes}{a list of aesthetics \code{x, y} and (optionally) \code{shape}}
 
 \item{geom}{initial geometry; only \code{"point"} so far implemented}
+
+\item{x}{an \code{asciiplot} object}
+
+\item{...}{not used}
 }
 \value{
 an \code{asciiplot} object, which can be \code{print}ed
@@ -31,6 +35,8 @@ The rendering height is fixed to 25 characters by default, but can be tweaked
 }
 \examples{
 asciiplot(iris, aes=list(x='Sepal.Width', y='Sepal.Length', shape='Species'), geom='point')
+
+if(!requireNamespace('BradleyTerry2')) install.packages('BradleyTerry2')
 asciiplot(ggplot2::diamonds, aes=list(x='carat', y='price', shape='cut'), geom='point')
 
 }

@@ -59,6 +59,8 @@ logScale <- function(x, ...) {
 #'
 #' @examples
 #' asciiplot(iris, aes=list(x='Sepal.Width', y='Sepal.Length', shape='Species'), geom='point')
+#'
+#' if(!requireNamespace('BradleyTerry2')) install.packages('BradleyTerry2')
 #' asciiplot(ggplot2::diamonds, aes=list(x='carat', y='price', shape='cut'), geom='point')
 #'
 #' @export
@@ -71,23 +73,25 @@ asciiplot <- function(df, aes = NULL, geom = NULL) {
 }
 
 #' @rdname asciiplot
+#' @param x an \code{asciiplot} object
+#' @param ... not used
 #' @export
-print.asciiplot <- function(ap) {
-  if(is.null(ap$height)) ap$height <- 25
-  if(is.null(ap$data)) stop("No data in plot")
-  if(is.null(ap$statistics)) ap$statistics <- identity
-  if(is.null(ap$scales)) ap$scales <- list(x = linearScale, y = linearScale)
-  if(is.null(ap$geometry)) warning("No geometry selected")
-  if(is.null(ap$coord)) ap$coord <- list(' ', ap$height, getOption('width') / 2)
-  if(is.null(ap$aesthetics)) stop("No aesthetics defined")
+print.asciiplot <- function(x, ...) {
+  if(is.null(x$height)) x$height <- 25
+  if(is.null(x$data)) stop("No data in plot")
+  if(is.null(x$statistics)) x$statistics <- identity
+  if(is.null(x$scales)) x$scales <- list('x' = linearScale, 'y' = linearScale)
+  if(is.null(x$geometry)) warning("No geometry selected")
+  if(is.null(x$coord)) x$coord <- list(' ', x$height, getOption('width') / 2)
+  if(is.null(x$aesthetics)) stop("No aesthetics defined")
   "All tests complete"
-  canvas <- do.call(matrix, ap$coord)
-  x <- ap$scales$x(ap$data[, ap$aesthetics$x]) * (ncol(canvas) - 1) + 1
-  y <- nrow(canvas) - ap$scales$y(ap$data[, ap$aesthetics$y]) * (nrow(canvas) - 1)
-  if("point" %in% ap$geometry) {
-    if(!is.null(ap$aesthetics$shape)) {
-      canvas[cbind(y, x)] <- c('O', 'X', '-', '+', '.')[ap$data[, ap$aesthetics$shape]]
-    } else canvas[cbind(y, x)] <- 'O'
+  canvas <- do.call(matrix, x$coord)
+  x_vals <- x$scales$x(x$data[, x$aesthetics$x]) * (ncol(canvas) - 1) + 1
+  y_vals <- nrow(canvas) - x$scales$y(x$data[, x$aesthetics$y]) * (nrow(canvas) - 1)
+  if("point" %in% x$geometry) {
+    if(!is.null(x$aesthetics$shape)) {
+      canvas[cbind(y_vals, x_vals)] <- c('O', 'X', '-', '+', '.')[x$data[, x$aesthetics$shape]]
+    } else canvas[cbind(y_vals, x_vals)] <- 'O'
   }
   render <- function(grid, hspace=' ') output <- apply(grid, 1, function(row) cat(c(row,'\n'), sep=hspace))
   render(canvas)

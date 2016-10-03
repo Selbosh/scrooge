@@ -6,11 +6,16 @@
 \usage{
 vcovBT(mu, X)
 }
+\arguments{
+\item{mu}{a vector of Bradley--Terry model parameter estimates}
+
+\item{X}{a square matrix of paired comparisons}
+}
 \value{
 A Fisher information matrix
 }
 \description{
-A utility function for \code{\link{BradleyTerry}}.
+Calculate the variance-covariance matrix for a Bradley-Terry model
 }
 \examples{
 # Compare results with BradleyTerry2:

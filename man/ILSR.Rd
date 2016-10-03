@@ -4,18 +4,18 @@
 \alias{ILSR}
 \title{Estimate the parameters of a Bradley-Terry model}
 \usage{
-ILSR(C, maxits = 100, tolerance = 1e-06, verbose = FALSE)
+ILSR(C, sort = FALSE, maxits = 100, tolerance = 1e-06, verbose = FALSE)
 }
 \arguments{
 \item{C}{a square matrix of paired comparisons}
+
+\item{sort}{logical. If \code{TRUE}, sort the weights in descending order}
 
 \item{maxits}{The maximum number of iterations in the Zermelo algorithm}
 
 \item{tolerance}{The criterion for convergence of the algorithm}
 
 \item{verbose}{logical. If \code{TRUE}, show the number of iterations as a message}
-
-\item{sort}{logical. If \code{TRUE}, sort the weights in descending order}
 }
 \value{
 A vector of estimated ability scores

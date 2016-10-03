@@ -24,7 +24,7 @@
 #' 172--180.
 #'
 #' @export
-ILSR <- function(C, maxits = 100, tolerance = 1e-6, verbose = FALSE){
+ILSR <- function(C, sort = FALSE, maxits = 100, tolerance = 1e-6, verbose = FALSE){
   n <- nrow(C)
   pi <- matrix(NA, nrow = maxits + 1, ncol = n)
   colnames(pi) <- colnames(C)
@@ -45,7 +45,9 @@ ILSR <- function(C, maxits = 100, tolerance = 1e-6, verbose = FALSE){
   }
   pi_out <- c(tail(pi, 1))
   names(pi_out) <- colnames(C)
-  pi_out
+  if (sort) {
+    sort(pi_out, decreasing = TRUE)
+  } else pi_out
 }
 
 #' Calculate the log-likelihood of a Bradley-Terry model
@@ -61,16 +63,21 @@ loglikelihood <- function(mu, X) {
 #'
 #' @importFrom numDeriv hessian
 #' @family Bradley-Terry model utility functions
+#'
+#' @param mu a vector of Bradley--Terry model parameter estimates
+#' @param X a square matrix of paired comparisons
 hessianBT <- function(mu, X) {
   numDeriv::hessian(function(t) -loglikelihood(t, X), mu)
 }
 
 #' Calculate the variance-covariance matrix for a Bradley-Terry model
 #'
-#' A utility function for \code{\link{BradleyTerry}}.
-#'
 #' @return A Fisher information matrix
 #' @family Bradley-Terry model utility functions
+#'
+#' @param mu a vector of Bradley--Terry model parameter estimates
+#' @param X a square matrix of paired comparisons
+#'
 #' @examples
 #' # Compare results with BradleyTerry2:
 #' if(!requireNamespace('BradleyTerry2')) install.packages('BradleyTerry2')

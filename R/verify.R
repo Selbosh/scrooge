@@ -8,6 +8,9 @@
 #' For an infix operator, use \code{a \%=\% b}.
 #'   For more conventional evaluation, try \code{verify(a, b)}.
 #'
+#' @param a the first vector to be compared
+#' @param b the second vector to be compared
+#'
 #' @examples
 #' pi %=% 3.141593
 #' 0.333333 %=% (1/3)

@@ -6,6 +6,11 @@
 \usage{
 hessianBT(mu, X)
 }
+\arguments{
+\item{mu}{a vector of Bradley--Terry model parameter estimates}
+
+\item{X}{a square matrix of paired comparisons}
+}
 \description{
 Calculate the observed Fisher information of Bradley-Terry model estimates
 }

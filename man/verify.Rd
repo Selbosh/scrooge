@@ -14,6 +14,11 @@ isapprox(a, b)
 
 a \%=\% b
 }
+\arguments{
+\item{a}{the first vector to be compared}
+
+\item{b}{the second vector to be compared}
+}
 \description{
 Rounds a pair of objects to 5 decimal places
   and tests for equality, elementwise.
