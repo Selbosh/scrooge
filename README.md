@@ -73,7 +73,7 @@ head(names(PageRank(citations, sort = TRUE)))
 ## [1] "JASA"   "AoS"    "JRSS-B" "StMed"  "Bcs"    "Bka"
 
 head(names(Scroogefactor(citations, sort = TRUE)))
-## [1] "JASA"   "AoS"    "JRSS-B" "StMed"  "Bcs"    "Bka"  
+[1] "JRSS-B" "AoS"    "Bka"    "JASA"   "ISR"    "JRSS-A"
 ```
 
 For comparison, here are the results of analysis of the same data using the `BradleyTerry2` package and the Bradley--Terry model:

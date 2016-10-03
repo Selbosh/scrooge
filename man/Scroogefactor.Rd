@@ -4,12 +4,14 @@
 \alias{Scroogefactor}
 \title{Compute the Scroogefactor}
 \usage{
-Scroogefactor(C, ...)
+Scroogefactor(C, alpha = 0.85, sort = FALSE)
 }
 \arguments{
 \item{C}{a square matrix}
 
-\item{...}{other arguments to \code{\link{PageRank}}}
+\item{alpha}{a damping factor}
+
+\item{sort}{logical. Reorder the indices in descending order of Scroogefactor score}
 }
 \value{
 A vector equivalent to PageRank per reference
@@ -22,6 +24,10 @@ Pinksi and Narin (1976) first proposed this metric as a citation metric called t
 When applied to citation data, it can be interpreted as the influence per outgoing reference, effectively penalising larger
 publications and review journals, which have larger combined bibliographies. When applied to sports or games results, it is
 influence per game lost.
+}
+\examples{
+Scroogefactor(citations, alpha = 1, sort = TRUE)
+
 }
 \references{
 Pinski, G., & Narin, F. (1976).

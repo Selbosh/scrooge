@@ -11,7 +11,7 @@ PageRank(C, alpha = 0.85, sort = FALSE)
 
 \item{alpha}{a damping factor}
 
-\item{sort}{reorder the indices in descending order of PageRank}
+\item{sort}{logical. Reorder the indices in descending order of PageRank}
 }
 \value{
 A PageRank vector, scaled to sum to one

@@ -15,7 +15,7 @@
 #'
 #' @param C a square matrix
 #' @param alpha a damping factor
-#' @param sort reorder the indices in descending order of PageRank
+#' @param sort logical. Reorder the indices in descending order of PageRank
 #'
 #' @return A PageRank vector, scaled to sum to one
 #'
@@ -62,7 +62,8 @@ PageRank <- function(C,
 #' influence per game lost.
 #'
 #' @param C a square matrix
-#' @param ... other arguments to \code{\link{PageRank}}
+#' @param alpha a damping factor
+#' @param sort logical. Reorder the indices in descending order of Scroogefactor score
 #'
 #' @return A vector equivalent to PageRank per reference
 #'
@@ -72,5 +73,11 @@ PageRank <- function(C,
 #' \emph{Information Processing & Management},
 #' 12(5), 297--312.
 #'
+#' @examples
+#' Scroogefactor(citations, alpha = 1, sort = TRUE)
+#'
 #' @export
-Scroogefactor <- function(C, ...) PageRank(C, ...) / colSums(C)
+Scroogefactor <- function(C, alpha = 0.85, sort = FALSE) {
+  SF <- PageRank(C, alpha = alpha, sort = FALSE) / colSums(C)
+  if(sort) sort(SF, decreasing = TRUE) else SF
+}
