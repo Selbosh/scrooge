@@ -23,31 +23,31 @@ pi %=% 3.14159
 
 ```r
 asciiplot(ggplot2::diamonds, aes=list(x='carat', y='price', shape='cut'), geom='point')
-# - -   . . . . + + + + - . + + + - + .   X   +           +                     O             
-# - X . - - + . . - . O . + . + + . - . .                               O                   O 
-# -   +   + - . + - - + + + + + + . . . -     O                                               
-# . X   . . . . . . . + + + O + . + . . +       .       O     +       -                         
-#   + . + . - + . . + - . . . . . + . -   + +   -                     +                         
-#   . . . + - - - + - . + - X + . + + + X   -     X                                               
-# . . + + + + + - + - + + . + + + O O X                                                       
-# . + + . . . . . . + + + + + X X O .   .     +                                               
-#   - - . O - + . . - + . X + - + . + O             . +     .                                   
-# - . . . + + - + - + + . X . X + . -     .     X             O                                 
-# - . . . . . + . + . + X X . - + + +   + +     X                                               
-# . + + . . . + . . - + . + . + -     + O -       + O                                             
-# - - . + - . X - . - + . - O   + .         O                                                     
-# . - - . . . + + - O X O O X   . - + O   +       O                                               
-# - + . - - . . . + - + +   X - O     O                                                           
-# .   - . X . . + X + + + + + O O O O - O         O     -                                               
-#   . - . - . . . + . + X O + O + +   O   O                                                           
-# . - . - + + + . + . . + O - O O O O                                                                 
-# O . . . - . + + - - + O X O -                                                                           
-#   . . . . + . X - + . O O                                                                                 
-# . + - . + O X O + .   X                                                                                 
-# - . - - . - . + . + O O                                                                                     
-# + . . . . - X . O O                                                                                           
-# X . . . - O X                                                                                                 
-# +  
+##                   - -   . . . . + + + + - . + + + - + .   X   +           +                     O             
+##                   - X . - - + . . - . O . + . + + . - . .                               O                   O 
+##                  -   +   + - . + - - + + + + + + . . . -     O                                               
+##                 . X   . . . . . . . + + + O + . + . . +       .       O     +       -                         
+##                   + . + . - + . . + - . . . . . + . -   + +   -                     +                         
+##                 . . . + - - - + - . + - X + . + + + X   -     X                                               
+##                   . . + + + + + - + - + + . + + + O O X                                                       
+##                   . + + . . . . . . + + + + + X X O .   .     +                                               
+##                   - - . O - + . . - + . X + - + . + O             . +     .                                   
+##                 - . . . + + - + - + + . X . X + . -     .     X             O                                 
+##                 - . . . . . + . + . + X X . - + + +   + +     X                                               
+##               . + + . . . + . . - + . + . + -     + O -       + O                                             
+##               - - . + - . X - . - + . - O   + .         O                                                     
+##               . - - . . . + + - O X O O X   . - + O   +       O                                               
+##               - + . - - . . . + - + +   X - O     O                                                           
+##         .   - . X . . + X + + + + + O O O O - O         O     -                                               
+##             . - . - . . . + . + X O + O + +   O   O                                                           
+##           . - . - + + + . + . . + O - O O O O                                                                 
+##       O . . . - . + + - - + O X O -                                                                           
+##       . . . . + . X - + . O O                                                                                 
+##       . + - . + O X O + .   X                                                                                 
+##   - . - - . - . + . + O O                                                                                     
+## + . . . . - X . O O                                                                                           
+## X . . . - O X                                                                                                 
+## +  
 ```
 
 ## Bibliometric datasets
@@ -79,7 +79,6 @@ For comparison, here are the results of analysis of the same data using the `Bra
 bin <- BradleyTerry2::countsToBinomial(citations)
 fit <- BradleyTerry2::BTm(cbind(win1,win2), player1, player2, data = bin)
 mu <- c('AmS' = 0, coef(fit))
-mu <- mu - mean(mu)
 head(names(sort(mu, decreasing = TRUE)))
 ## [1] "..JRSS-B" "..AoS"    "..Bka"    "..JASA"   "..Bcs"    "..JRSS-A"
 
