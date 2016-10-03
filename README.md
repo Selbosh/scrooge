@@ -79,11 +79,8 @@ head(names(Scroogefactor(citations, sort = TRUE)))
 For comparison, here are the results of analysis of the same data using the `BradleyTerry2` package and the Bradley--Terry model:
 
 ```r
-bin <- BradleyTerry2::countsToBinomial(citations)
-fit <- BradleyTerry2::BTm(cbind(win1,win2), player1, player2, data = bin)
-mu <- c('AmS' = 0, coef(fit))
-head(names(sort(mu, decreasing = TRUE)))
-## [1] "..JRSS-B" "..AoS"    "..Bka"    "..JASA"   "..Bcs"    "..JRSS-A"
+head(names(BradleyTerry(citations, sort = TRUE)))
+## [1] "JRSS-B" "AoS"    "Bka"    "JASA"   "Bcs"    "JRSS-A"
 
 cor(mu, log(ILSR(citations)))
 ## [1] 1
