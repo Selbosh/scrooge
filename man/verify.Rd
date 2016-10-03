@@ -3,7 +3,6 @@
 \name{verify}
 \alias{\%=\%}
 \alias{approx}
-\alias{equalish}
 \alias{isapprox}
 \alias{verify}
 \title{Verify if two numbers are approximately equal}

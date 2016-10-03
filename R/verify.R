@@ -17,7 +17,7 @@
 #' all(1:5 + 1e-6 %=% 1:5)
 #' verify(0.7777777, 7/9)
 #'
-#' @aliases approx equalish
+#' @aliases approx
 #' @seealso \code{\link{all.equal}} \code{\link{Comparison}} \code{\link{identical}}
 #'
 #' @export
