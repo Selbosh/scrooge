@@ -60,9 +60,6 @@ logScale <- function(x, ...) {
 #' @examples
 #' asciiplot(iris, aes=list(x='Sepal.Width', y='Sepal.Length', shape='Species'), geom='point')
 #'
-#' if(!requireNamespace('BradleyTerry2')) install.packages('BradleyTerry2')
-#' asciiplot(ggplot2::diamonds, aes=list(x='carat', y='price', shape='cut'), geom='point')
-#'
 #' @export
 asciiplot <- function(df, aes = NULL, geom = NULL) {
   stopifnot(is.data.frame(df))

@@ -18,7 +18,7 @@ a vector in the same format as \code{x}, centred and scaled logarithmically
 Transform values on a logarithmic scale
 }
 \seealso{
-Other plot constructors: \code{\link{asciiplot}},
+Other plot.constructors: \code{\link{asciiplot}},
   \code{\link{linearScale}}
 }
 

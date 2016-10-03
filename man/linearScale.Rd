@@ -18,7 +18,7 @@ a vector in the same format as \code{x}, centred and scaled to fit the \code{cod
 Transform values on a linear scale
 }
 \seealso{
-Other plot constructors: \code{\link{asciiplot}},
+Other plot.constructors: \code{\link{asciiplot}},
   \code{\link{logScale}}
 }
 

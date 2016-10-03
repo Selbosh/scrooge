@@ -28,7 +28,7 @@ my_covariances <- vcovBT(BT2_mu, citations)
 plot(BT2_covariances, my_covariances); abline(0, 1)
 }
 \seealso{
-Other Bradley-Terry model utility functions: \code{\link{hessianBT}},
+Other Bradley.Terry.model.utility.functions: \code{\link{hessianBT}},
   \code{\link{loglikelihood}}
 }
 

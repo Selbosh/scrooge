@@ -36,9 +36,6 @@ The rendering height is fixed to 25 characters by default, but can be tweaked
 \examples{
 asciiplot(iris, aes=list(x='Sepal.Width', y='Sepal.Length', shape='Species'), geom='point')
 
-if(!requireNamespace('BradleyTerry2')) install.packages('BradleyTerry2')
-asciiplot(ggplot2::diamonds, aes=list(x='carat', y='price', shape='cut'), geom='point')
-
 }
 \references{
 Wilkinson, L. (2006).
@@ -51,7 +48,7 @@ A layered grammar of graphics.
 19(1), 3--28.
 }
 \seealso{
-Other plot constructors: \code{\link{linearScale}},
+Other plot.constructors: \code{\link{linearScale}},
   \code{\link{logScale}}
 }
 \concept{

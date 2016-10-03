@@ -15,7 +15,7 @@ hessianBT(mu, X)
 Calculate the observed Fisher information of Bradley-Terry model estimates
 }
 \seealso{
-Other Bradley-Terry model utility functions: \code{\link{loglikelihood}},
+Other Bradley.Terry.model.utility.functions: \code{\link{loglikelihood}},
   \code{\link{vcovBT}}
 }
 
