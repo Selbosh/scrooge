@@ -1,4 +1,4 @@
 library(testthat)
-library(mypackage)
+library(scrooge)
 
-test_check("mypackage")
+test_check("scrooge")
