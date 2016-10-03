@@ -18,14 +18,9 @@ A Fisher information matrix
 Calculate the variance-covariance matrix for a Bradley-Terry model
 }
 \examples{
-# Compare results with BradleyTerry2:
-if(!requireNamespace('BradleyTerry2')) install.packages('BradleyTerry2')
-bincounts <- BradleyTerry2::countsToBinomial(citations)
-BT2fit <- BradleyTerry2::BTm(cbind(win1, win2), player1, player2, data = bincounts)
-BT2_mu <- c('AmS' = 0, coef(BT2fit)); BT2_mu <- BT2_mu - mean(BT2_mu)
-BT2_covariances <- vcov(BT2fit)
-my_covariances <- vcovBT(BT2_mu, citations)
-plot(BT2_covariances, my_covariances); abline(0, 1)
+mu <- ILSR(citations)
+vcovBT(mu, citations)
+
 }
 \seealso{
 Other Bradley.Terry.model.utility.functions: \code{\link{hessianBT}},
