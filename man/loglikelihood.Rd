@@ -15,7 +15,7 @@ loglikelihood(mu, X)
 Calculate the log-likelihood of a Bradley-Terry model
 }
 \seealso{
-Other Bradley.Terry.model.utility.functions: \code{\link{hessianBT}},
-  \code{\link{vcovBT}}
+Other Bradley-Terry model utility functions: \code{\link{BradleyTerry}},
+  \code{\link{hessianBT}}, \code{\link{vcovBT}}
 }
 

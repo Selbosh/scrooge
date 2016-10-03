@@ -7,7 +7,7 @@
 #' \emph{To do:} Add unit tests.
 #'
 #' @param C a square matrix of paired comparisons
-#' @param maxits The maximum number of iterations in the Zermelo algorithm
+#' @param maxits The maximum number of iterations in the I-LSR algorithm
 #' @param tolerance The criterion for convergence of the algorithm
 #' @param sort logical. If \code{TRUE}, sort the weights in descending order
 #' @param verbose logical. If \code{TRUE}, show the number of iterations as a message
@@ -48,6 +48,45 @@ ILSR <- function(C, sort = FALSE, maxits = 100, tolerance = 1e-6, verbose = FALS
   if (sort) {
     sort(pi_out, decreasing = TRUE)
   } else pi_out
+}
+
+#' Estimate the parameters of a Bradley-Terry model
+#'
+#' Estimate Bradley-Terry ability scores from paired comparison data using an iterative scaling algorithm.
+#'
+#' The current implementation, based on \code{BradleyTerry2}, is very slow and is basically a placeholder.
+#'
+#' @param C a square matrix of paired comparisons
+#' @param sort logical. If \code{TRUE}, sort the weights in descending order
+#'
+#' @return The maximum likelihood ability scores estimate, scaled to sum to one
+#'
+#' @family Bradley-Terry model utility functions
+#'
+#' @examples
+#' BradleyTerry(citations)
+#'
+#' @import BradleyTerry2
+#'
+#' @references
+#' Bradley, R. A., & Terry, M. E. (1952).
+#' Rank analysis of incomplete block designs: I. The method of paired comparisons.
+#' \emph{Biometrika},
+#' 39(3/4), 324--345.
+#'
+#' Heather Turner, David Firth (2012).
+#' Bradley--Terry Models in R: The \code{BradleyTerry2} Package.
+#' \emph{Journal of Statistical Software},
+#' 48(9), 1--21.
+#'
+#' @export
+BradleyTerry <- function(C, sort = FALSE) {
+  bin <- BradleyTerry2::countsToBinomial(C)
+  BT_model <- BradleyTerry2::BTm(cbind(win1, win2), player1, player2, data = bin)
+  mu <- setNames(c(0, coef(BT_model)), colnames(C))
+  mu <- mu - mean(mu)
+  expmu <- exp(mu) / sum(exp(mu))
+  if(sort) sort(expmu, decreasing = TRUE) else expmu
 }
 
 #' Calculate the log-likelihood of a Bradley-Terry model

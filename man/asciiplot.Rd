@@ -48,7 +48,7 @@ A layered grammar of graphics.
 19(1), 3--28.
 }
 \seealso{
-Other plot.constructors: \code{\link{linearScale}},
+Other plot constructors: \code{\link{linearScale}},
   \code{\link{logScale}}
 }
 \concept{

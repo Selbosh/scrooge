@@ -23,7 +23,7 @@ vcovBT(mu, citations)
 
 }
 \seealso{
-Other Bradley.Terry.model.utility.functions: \code{\link{hessianBT}},
-  \code{\link{loglikelihood}}
+Other Bradley-Terry model utility functions: \code{\link{BradleyTerry}},
+  \code{\link{hessianBT}}, \code{\link{loglikelihood}}
 }
 

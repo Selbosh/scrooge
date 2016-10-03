@@ -11,7 +11,7 @@ ILSR(C, sort = FALSE, maxits = 100, tolerance = 1e-06, verbose = FALSE)
 
 \item{sort}{logical. If \code{TRUE}, sort the weights in descending order}
 
-\item{maxits}{The maximum number of iterations in the Zermelo algorithm}
+\item{maxits}{The maximum number of iterations in the I-LSR algorithm}
 
 \item{tolerance}{The criterion for convergence of the algorithm}
 
