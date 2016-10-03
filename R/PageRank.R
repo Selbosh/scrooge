@@ -10,11 +10,11 @@
 #'
 #' In bibliometrics, PageRank has also been implemented as the Eigenfactor Metric and as the SCImago Journal Rank.
 #'
+#' By default, \code{C[i,j]} refers to the directed edge that points from column j to row i.
+#' Use \code{t(C)} if you want edges directed from rows to columns instead.
+#'
 #' @param C a square matrix
 #' @param alpha a damping factor
-#' @param row2col logical. by default, \code{C[i,j]} refers to the directed edge that
-#'   points from column j to row i. Set \code{TRUE} to
-#'   transpose the matrix \code{C} so that edges lead from rows to columns instead
 #' @param sort reorder the indices in descending order of PageRank
 #'
 #' @return A PageRank vector, scaled to sum to one
@@ -40,9 +40,7 @@
 #' @export
 PageRank <- function(C,
                      alpha = 0.85,
-                     row2col = FALSE,
                      sort = FALSE) {
-  if(row2col) C <- t(C)
   n <- sqrt(length(C))
   C <- matrix(C, n, n, dimnames = dimnames(C))
   P <- scale(C, center = FALSE, scale = colSums(C))
@@ -53,3 +51,26 @@ PageRank <- function(C,
   if(sort) sort(PR, decreasing = TRUE)
   else PR
 }
+
+#' Compute the Scroogefactor
+#'
+#' The Scroogefactor is PageRank divided by out-degree. It can be used as an approximate estimator for the Bradley--Terry model.
+#'
+#' Pinksi and Narin (1976) first proposed this metric as a citation metric called the \emph{influence per reference}.
+#' When applied to citation data, it can be interpreted as the influence per outgoing reference, effectively penalising larger
+#' publications and review journals, which have larger combined bibliographies. When applied to sports or games results, it is
+#' influence per game lost.
+#'
+#' @param C a square matrix
+#' @param ... other arguments to \code{\link{PageRank}}
+#'
+#' @return A vector equivalent to PageRank per reference
+#'
+#' @references
+#' Pinski, G., & Narin, F. (1976).
+#' Citation influence for journal aggregates of scientific publications: Theory, with application to the literature of physics.
+#' \emph{Information Processing & Management},
+#' 12(5), 297--312.
+#'
+#' @export
+Scroogefactor <- function(C, ...) PageRank(C, ...) / colSums(C)

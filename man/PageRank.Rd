@@ -4,16 +4,12 @@
 \alias{PageRank}
 \title{Compute a PageRank vector}
 \usage{
-PageRank(C, alpha = 0.85, row2col = FALSE, sort = FALSE)
+PageRank(C, alpha = 0.85, sort = FALSE)
 }
 \arguments{
 \item{C}{a square matrix}
 
 \item{alpha}{a damping factor}
-
-\item{row2col}{logical. by default, \code{C[i,j]} refers to the directed edge that
-points from column j to row i. Set \code{TRUE} to
-transpose the matrix \code{C} so that edges lead from rows to columns instead}
 
 \item{sort}{reorder the indices in descending order of PageRank}
 }
@@ -31,6 +27,9 @@ teleporting at any time with probability \code{1 - alpha}. The effect of the dam
 any disconnected components or transient portions of the network.
 
 In bibliometrics, PageRank has also been implemented as the Eigenfactor Metric and as the SCImago Journal Rank.
+
+By default, \code{C[i,j]} refers to the directed edge that points from column j to row i.
+Use \code{t(C)} if you want edges directed from rows to columns instead.
 }
 \examples{
 PageRank(citations)
