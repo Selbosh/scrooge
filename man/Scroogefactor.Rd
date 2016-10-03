@@ -14,7 +14,7 @@ Scroogefactor(C, alpha = 0.85, sort = FALSE)
 \item{sort}{logical. Reorder the indices in descending order of Scroogefactor score}
 }
 \value{
-A vector equivalent to PageRank per reference
+A vector equivalent to PageRank per reference, scaled to sum to one
 }
 \description{
 The Scroogefactor is PageRank divided by out-degree. It can be used as an approximate estimator for the Bradley--Terry model.

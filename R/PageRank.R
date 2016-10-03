@@ -65,7 +65,7 @@ PageRank <- function(C,
 #' @param alpha a damping factor
 #' @param sort logical. Reorder the indices in descending order of Scroogefactor score
 #'
-#' @return A vector equivalent to PageRank per reference
+#' @return A vector equivalent to PageRank per reference, scaled to sum to one
 #'
 #' @references
 #' Pinski, G., & Narin, F. (1976).
@@ -79,5 +79,6 @@ PageRank <- function(C,
 #' @export
 Scroogefactor <- function(C, alpha = 0.85, sort = FALSE) {
   SF <- PageRank(C, alpha = alpha, sort = FALSE) / colSums(C)
+  SF <- SF / sum(SF)
   if(sort) sort(SF, decreasing = TRUE) else SF
 }
