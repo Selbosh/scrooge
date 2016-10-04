@@ -1,9 +1,11 @@
 #' Simulate a quasi-symmetric matrix
 #'
 #' @param n the dimension of the matrix
-#' @param intensity the mean of the underlying Poisson random number generator
+#' @param lambda the mean of the underlying Poisson random number generator
+#' @param density the density (i.e. proportion of non-zeroes) of the symmetric component
+#' @param dimnames names of the matrix dimensions, as a list
 #'
-#' @importFrom Matrix rsparsematrix
+#' @importFrom Matrix rsparsematrix drop0
 #'
 #' @return A sparse, quasi-symmetric matrix of dimension \code{n} by \code{n}.
 #'
@@ -11,15 +13,20 @@
 #'
 #' @examples
 #' rquasisymmetric(5)
-rquasisymmetric <- function(n, intensity = 10) {
-  S <- Matrix::rsparsematrix(n, n, density = 0.7,
+rquasisymmetric <- function(n,
+                            lambda = 10,
+                            density = 0.75,
+                            dimnames = list(cited = paste0('P', 1:n),
+                                            citing = paste0('P', 1:n))) {
+  S <- Matrix::rsparsematrix(n, n,
+                             density = density,
                              symmetric = TRUE,
-                             dimnames = list(cited = letters[1:n], citing = letters[1:n]),
-                             rand.x = function(N) rpois(N, intensity))
+                             rand.x = function(N) rpois(N, lambda))
   a <- runif(n)
   A <- diag(a)
   X <- Matrix::drop0(A %*% S)
   attr(X, 'S') <- S
-  attr(X, 'a') <- a/sum(a)
+  attr(X, 'a') <- a / sum(a)
+  dimnames(X) <- dimnames
   X
 }
