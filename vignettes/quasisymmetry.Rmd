@@ -1,0 +1,63 @@
+---
+title: "Quasi-symmetry models with the `scrooge` package"
+author: "David A. Selby"
+date: "`r format(Sys.Date(), '%A %e %B %Y')`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Quasi-symmetry models with the scrooge package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Preamble
+
+The `scrooge` package is a collection of utilities and functions for studying bibliometrics. Install it using
+
+```r
+devtools::install_github('Selbosh/scrooge')
+```
+
+Then load the package:
+
+```{r load_package}
+library(scrooge)
+```
+
+## Introduction to quasi-symmetry
+
+A square matrix $X$ is quasi-symmetric if it can be decomposed in the form $X = AS$, where $A$ is diagonal and $S$ is symmetric. The function `rquasisymmetric` generates (sparse) quasi-symmetric matrices, with the elements of $S$ independently sampled from a Poisson distribution and the elements of $A$ (or the corresponding vector of diagonal elements, $a$) sampled from a uniform distribution.
+
+```{r generate_quasisymm}
+(X <- rquasisymmetric(5))
+```
+
+The symmetric and diagonal components are saved as attributes of the output.
+
+```{r get_attributes}
+attr(X, 'a')
+attr(X, 'S')
+```
+
+The `Scroogefactor` function computes the leading eigenvector of `X / colSums(X)`. It is equivalent to `PageRank(X, 1) / colSums(X)`. Given a quasi-symmetric matrix, this should extract the vector `a` exactly. For identifiability, the vector `a` and the output of `Scroogefactor` should each sum to one.
+
+```{r compare_SF}
+SF <- Scroogefactor(X)
+PR <- PageRank(X, alpha = 1) / Matrix::colSums(X)
+PR <- PR / sum(PR) # Renormalise to sum to 1
+all.equal(SF, PR)
+all.equal(SF, attr(X, 'a'))
+```
+
+## The Bradley--Terry model
+
+The quasi-symmetry model is a representation of the Bradley--Terry model. The latter involves computing 'ability weights' of sports teams, chess players, academic journals or any other objects involved in paired comparisons. The abilities, estimated via maximum likelihood, are equivalent to the $a$ scaling vector in the quasi-symmetry model.
+
+Another (not very rigorous) way of putting it might be to say that the $S$ matrix describes the "undirected" component of the graph (say, the absolute intensity of the connections) and $A$ describes the "directed" part (the relative ranking).
+
+## Damping factors
+
+So far we have chosen the argument `alpha = 1` in the `PageRank` function. This is equivalent to an *undamped* PageRank, where the probability of a random surfer teleporting during a traversal around the graph is zero. Damping can make the PageRank calculation more stable and help deal with disconnected or non-ergodic components of the network.
+
+For `alpha` < 1 in PageRank is there an equivalent adjustment that will retrieve exactly the same vector for the Bradley--Terry model?
+
+
