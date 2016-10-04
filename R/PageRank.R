@@ -76,9 +76,11 @@ PageRank <- function(C,
 #' @examples
 #' Scroogefactor(citations, alpha = 1, sort = TRUE)
 #'
+#' @importFrom Matrix colSums
+#'
 #' @export
 Scroogefactor <- function(C, alpha = 1.00, sort = FALSE) {
-  SF <- PageRank(C, alpha = alpha, sort = FALSE) / colSums(C)
+  SF <- PageRank(C, alpha = alpha, sort = FALSE) / Matrix::colSums(C)
   SF <- SF / sum(SF)
   if(sort) sort(SF, decreasing = TRUE) else SF
 }
