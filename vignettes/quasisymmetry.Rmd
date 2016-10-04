@@ -60,4 +60,46 @@ So far we have chosen the argument `alpha = 1` in the `PageRank` function. This 
 
 For `alpha` < 1 in PageRank is there an equivalent adjustment that will retrieve exactly the same vector for the Bradley--Terry model?
 
+Assuming quasi-symmetry, PageRank involves computing the leading eigenvector of
 
+\[
+\begin{aligned}
+  G &= \alpha X D^{-1}   + (1-\alpha) \frac1n e e^T \\
+    &= \alpha A S D^{-1} + (1-\alpha) \frac1n e e^T, \\
+\end{aligned}
+\]
+
+which can be rearranged to give
+
+\[
+AS = \frac1\alpha GD - \frac{1-\alpha}{\alpha n} e e^T D.
+\]
+
+Is this right? Let's test it on a simple example.
+
+```{r damping}
+D <- diag(Matrix::colSums(X))
+P <- X %*% solve(D)
+alpha <- 0.85
+n <- nrow(X)
+G <- alpha * P + (1 - alpha) / n
+X_2 <- (G %*% D) / alpha - matrix((1 / alpha - 1) / n, n, n) %*% D
+all.equal(as.matrix(X), as.matrix(X_2),
+          check.attributes = FALSE)
+```
+
+OK, so where does that leave us?
+
+Try something like the following. Recall `ILSR` computes an approximate Bradley--Terry maximum likelihood estimate.
+
+```{r}
+X_pseudo <- Matrix::t(alpha * Matrix::t(X) + (1 - alpha) * Matrix::colSums(X) / n)
+plot(Scroogefactor(X, alpha), ILSR(X))
+abline(0, 1)
+cor(Scroogefactor(X, alpha), ILSR(X))
+plot(Scroogefactor(X, alpha), ILSR(X_pseudo))
+abline(0, 1)
+cor(Scroogefactor(X, alpha), ILSR(X_pseudo))
+```
+
+Pretty close but not 100% exact!

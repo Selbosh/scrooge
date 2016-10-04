@@ -86,25 +86,25 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(X &lt;-<span class="st"> </span><span class="kw">rquasisymmetric</span>(<span class="dv">5</span>))</code></pre></div>
 <pre><code>## 5 x 5 sparse Matrix of class &quot;dgCMatrix&quot;
 ##      citing
-## cited        P1        P2        P3       P4       P5
-##    P1 0.8062527 0.8062527 .         1.151790 1.036611
-##    P2 0.7071128 .         1.2121934 1.313209 1.010161
-##    P3 .         3.7478054 .         3.435488 1.873903
-##    P4 0.8760530 1.1388689 0.9636583 1.138869 0.876053
-##    P5 3.4549426 3.8388252 2.3032951 3.838825 .</code></pre>
+## cited         P1         P2         P3         P4        P5
+##    P1 .          1.38579961 3.11804913 2.59837428 .        
+##    P2 4.50048762 .          6.18817048 7.31329239 5.0630486
+##    P3 1.53537507 0.93828476 0.68238892 0.68238892 0.5970903
+##    P4 0.05136977 0.04452047 0.02739721 0.03082186 .        
+##    P5 .          1.57941746 1.22843580 .          1.7549083</code></pre>
 <p>The symmetric and diagonal components are saved as attributes of the output.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">attr</span>(X, <span class="st">'a'</span>)</code></pre></div>
-<pre><code>##        P1        P2        P3        P4        P5 
-## 0.1151790 0.1010161 0.3123171 0.0876053 0.3838825</code></pre>
+<pre><code>##          P1          P2          P3          P4          P5 
+## 0.173224952 0.562560953 0.085298615 0.003424652 0.175490829</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">attr</span>(X, <span class="st">'S'</span>)</code></pre></div>
 <pre><code>## 5 x 5 sparse Matrix of class &quot;dsCMatrix&quot;
 ##      citing
 ## cited P1 P2 P3 P4 P5
-##    P1  7  7  . 10  9
-##    P2  7  . 12 13 10
-##    P3  . 12  . 11  6
-##    P4 10 13 11 13 10
-##    P5  9 10  6 10  .</code></pre>
+##    P1  .  8 18 15  .
+##    P2  8  . 11 13  9
+##    P3 18 11  8  8  7
+##    P4 15 13  8  9  .
+##    P5  .  9  7  . 10</code></pre>
 <p>The <code>Scroogefactor</code> function computes the leading eigenvector of <code>X / colSums(X)</code>. It is equivalent to <code>PageRank(X, 1) / colSums(X)</code>. Given a quasi-symmetric matrix, this should extract the vector <code>a</code> exactly. For identifiability, the vector <code>a</code> and the output of <code>Scroogefactor</code> should each sum to one.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">SF &lt;-<span class="st"> </span><span class="kw">Scroogefactor</span>(X)
 PR &lt;-<span class="st"> </span><span class="kw">PageRank</span>(X, <span class="dt">alpha =</span> <span class="dv">1</span>) /<span class="st"> </span>Matrix::<span class="kw">colSums</span>(X)
@@ -123,6 +123,41 @@ PR &lt;-<span class="st"> </span>PR /<span class="st"> </span><span class="kw">s
 <h2>Damping factors</h2>
 <p>So far we have chosen the argument <code>alpha = 1</code> in the <code>PageRank</code> function. This is equivalent to an <em>undamped</em> PageRank, where the probability of a random surfer teleporting during a traversal around the graph is zero. Damping can make the PageRank calculation more stable and help deal with disconnected or non-ergodic components of the network.</p>
 <p>For <code>alpha</code> &lt; 1 in PageRank is there an equivalent adjustment that will retrieve exactly the same vector for the Bradley–Terry model?</p>
+<p>Assuming quasi-symmetry, PageRank involves computing the leading eigenvector of</p>
+<p><span class="math display">\[
+\begin{aligned}
+  G &amp;= \alpha X D^{-1}   + (1-\alpha) \frac1n e e^T \\
+    &amp;= \alpha A S D^{-1} + (1-\alpha) \frac1n e e^T, \\
+\end{aligned}
+\]</span></p>
+<p>which can be rearranged to give</p>
+<p><span class="math display">\[
+AS = \frac1\alpha GD - \frac{1-\alpha}{\alpha n} e e^T D.
+\]</span></p>
+<p>Is this right? Let’s test it on a simple example.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">D &lt;-<span class="st"> </span><span class="kw">diag</span>(Matrix::<span class="kw">colSums</span>(X))
+P &lt;-<span class="st"> </span>X %*%<span class="st"> </span><span class="kw">solve</span>(D)
+alpha &lt;-<span class="st"> </span><span class="fl">0.85</span>
+n &lt;-<span class="st"> </span><span class="kw">nrow</span>(X)
+G &lt;-<span class="st"> </span>alpha *<span class="st"> </span>P +<span class="st"> </span>(<span class="dv">1</span> -<span class="st"> </span>alpha) /<span class="st"> </span>n
+X_2 &lt;-<span class="st"> </span>(G %*%<span class="st"> </span>D) /<span class="st"> </span>alpha -<span class="st"> </span><span class="kw">matrix</span>((<span class="dv">1</span> /<span class="st"> </span>alpha -<span class="st"> </span><span class="dv">1</span>) /<span class="st"> </span>n, n, n) %*%<span class="st"> </span>D
+<span class="kw">all.equal</span>(<span class="kw">as.matrix</span>(X), <span class="kw">as.matrix</span>(X_2),
+          <span class="dt">check.attributes =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<p>OK, so where does that leave us?</p>
+<p>Try something like the following. Recall <code>ILSR</code> computes an approximate Bradley–Terry maximum likelihood estimate.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">X_pseudo &lt;-<span class="st"> </span>Matrix::<span class="kw">t</span>(alpha *<span class="st"> </span>Matrix::<span class="kw">t</span>(X) +<span class="st"> </span>(<span class="dv">1</span> -<span class="st"> </span>alpha) *<span class="st"> </span>Matrix::<span class="kw">colSums</span>(X) /<span class="st"> </span>n)
+<span class="kw">plot</span>(<span class="kw">Scroogefactor</span>(X, alpha), <span class="kw">ILSR</span>(X))
+<span class="kw">abline</span>(<span class="dv">0</span>, <span class="dv">1</span>)</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cor</span>(<span class="kw">Scroogefactor</span>(X, alpha), <span class="kw">ILSR</span>(X))</code></pre></div>
+<pre><code>## [1] 0.9995808</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(<span class="kw">Scroogefactor</span>(X, alpha), <span class="kw">ILSR</span>(X_pseudo))
+<span class="kw">abline</span>(<span class="dv">0</span>, <span class="dv">1</span>)</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cor</span>(<span class="kw">Scroogefactor</span>(X, alpha), <span class="kw">ILSR</span>(X_pseudo))</code></pre></div>
+<pre><code>## [1] 0.9993805</code></pre>
+<p>Pretty close but not 100% exact!</p>
 </div>
 
 
