@@ -4,7 +4,7 @@
 \alias{Scroogefactor}
 \title{Compute the Scroogefactor}
 \usage{
-Scroogefactor(C, alpha = 0.85, sort = FALSE)
+Scroogefactor(C, alpha = 1, sort = FALSE)
 }
 \arguments{
 \item{C}{a square matrix}

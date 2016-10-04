@@ -77,7 +77,7 @@ PageRank <- function(C,
 #' Scroogefactor(citations, alpha = 1, sort = TRUE)
 #'
 #' @export
-Scroogefactor <- function(C, alpha = 0.85, sort = FALSE) {
+Scroogefactor <- function(C, alpha = 1.00, sort = FALSE) {
   SF <- PageRank(C, alpha = alpha, sort = FALSE) / colSums(C)
   SF <- SF / sum(SF)
   if(sort) sort(SF, decreasing = TRUE) else SF
