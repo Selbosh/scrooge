@@ -21,12 +21,14 @@ rquasisymmetric <- function(n,
   S <- Matrix::rsparsematrix(n, n,
                              density = density,
                              symmetric = TRUE,
+                             dimnames = dimnames,
                              rand.x = function(N) rpois(N, lambda))
   a <- runif(n)
+  a <- setNames(a / sum(a), dimnames$cited)
   A <- diag(a)
   X <- Matrix::drop0(A %*% S)
   attr(X, 'S') <- S
-  attr(X, 'a') <- a / sum(a)
+  attr(X, 'a') <- a
   dimnames(X) <- dimnames
   X
 }
