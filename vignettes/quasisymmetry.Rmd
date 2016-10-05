@@ -7,9 +7,28 @@ vignette: >
   %\VignetteIndexEntry{Quasi-symmetry models with the scrooge package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+references:
+- id: Dias2015
+  title: Algorithms and properties for positive symmetrizable matrices
+  author:
+  - family: Dias
+    given: Elisângela Silva
+  - family: Castonguay
+    given: Diane
+  - family: Dourado
+    given: Mitre Costa
+  container-title: "arXiv:1503.03468v1 [cs.DM]"
+  URL: 'https://arxiv.org/pdf/1503.03468v1.pdf'
+  type: article-journal
+  issued:
+    year: 2015
 ---
 
 ## Preamble
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(fig.width = 6, fig.height = 5)
+```
 
 The `scrooge` package is a collection of utilities and functions for studying bibliometrics. Install it using
 
@@ -25,27 +44,30 @@ library(scrooge)
 
 ## Introduction to quasi-symmetry
 
-A square matrix $X$ is quasi-symmetric if it can be decomposed in the form $X = AS$, where $A$ is diagonal and $S$ is symmetric. The function `rquasisymmetric` generates (sparse) quasi-symmetric matrices, with the elements of $S$ independently sampled from a Poisson distribution and the elements of $A$ (or the corresponding vector of diagonal elements, $a$) sampled from a uniform distribution.
+A square matrix $Q$ is quasi-symmetric if it can be decomposed in the form $Q = AS$, where $A$ is diagonal and $S$ is symmetric. The function `rquasisymmetric` generates (sparse) quasi-symmetric matrices, with the elements of $S$ independently sampled from a Poisson distribution and the elements of $A$ (or the corresponding vector of diagonal elements, $a$) sampled from a uniform distribution.
 
 ```{r generate_quasisymm}
-(X <- rquasisymmetric(5))
+n <- 100
+Q <- rquasisymmetric(n, density = 1)
+D <- Matrix::Diagonal(n, Matrix::colSums(Q))
 ```
 
 The symmetric and diagonal components are saved as attributes of the output.
 
-```{r get_attributes}
-attr(X, 'a')
-attr(X, 'S')
+```{r get_attributes, results = 'hide', message = FALSE}
+attr(Q, 'a')
+attr(Q, 'S')
+# Output hidden
 ```
 
-The `Scroogefactor` function computes the leading eigenvector of `X / colSums(X)`. It is equivalent to `PageRank(X, 1) / colSums(X)`. Given a quasi-symmetric matrix, this should extract the vector `a` exactly. For identifiability, the vector `a` and the output of `Scroogefactor` should each sum to one.
+The `Scroogefactor` function computes the leading eigenvector of `Q / colSums(Q)`. It is equivalent to `PageRank(Q, 1) / colSums(Q)`. Given a quasi-symmetric matrix, this should extract the vector `a` exactly. For identifiability, the vector `a` and the output of `Scroogefactor` should each sum to one.
 
 ```{r compare_SF}
-SF <- Scroogefactor(X)
-PR <- PageRank(X, alpha = 1) / Matrix::colSums(X)
+SF <- Scroogefactor(Q)
+PR <- PageRank(Q, alpha = 1) / Matrix::colSums(Q)
 PR <- PR / sum(PR) # Renormalise to sum to 1
 all.equal(SF, PR)
-all.equal(SF, attr(X, 'a'))
+all.equal(SF, attr(Q, 'a'))
 ```
 
 ## The Bradley--Terry model
@@ -63,43 +85,87 @@ For `alpha` < 1 in PageRank is there an equivalent adjustment that will retrieve
 Assuming quasi-symmetry, PageRank involves computing the leading eigenvector of
 
 \[
-\begin{aligned}
-  G &= \alpha X D^{-1}   + (1-\alpha) \frac1n e e^T \\
-    &= \alpha A S D^{-1} + (1-\alpha) \frac1n e e^T, \\
-\end{aligned}
+\alpha Q D^{-1}   + (1-\alpha) \frac1n e e^T.
 \]
 
-which can be rearranged to give
+We know that the *Scroogefactor*, defined as PageRank per out-link, retrieves the vector $a$ when $Q$ is quasi-symmetric and PageRank is undamped. This can be extended to deal with damping, as follows.
 
+1. Let $Q = AS$ be quasi-symmetric. Let $D$ be the diagonal matrix of column sums of $Q$.
+2. Undamped PageRank, $\pi_1$, is the leading (right) eigenvector of $QD^{-1}$. Undamped Scroogefactor, $D^{-1}\pi_1$ is exactly equivalent to the diagonal component (Bradley--Terry scores) of $Q = (Q D^{-1}) D$.
+3. Damped PageRank, $\pi_\alpha$, is the leading eigenvector of \[\alpha Q D^{-1} + (1-\alpha)\frac1n e e^T\] (where $e$ is an $n$-vector of ones), so damped Scroogefactor, $\text{SF}_\alpha = D^{-1}\pi_\alpha$, should be equivalent to the Bradley--Terry scores of
 \[
-AS = \frac1\alpha GD - \frac{1-\alpha}{\alpha n} e e^T D.
+Q_\alpha = \left[ \alpha Q D^{-1} + (1-\alpha)\frac1n e e^T \right] D = \alpha Q + (1-\alpha)\frac1n ee^T D.
 \]
 
-Is this right? Let's test it on a simple example.
-
-```{r damping}
-D <- diag(Matrix::colSums(X))
-P <- X %*% solve(D)
-alpha <- 0.85
-n <- nrow(X)
-G <- alpha * P + (1 - alpha) / n
-X_2 <- (G %*% D) / alpha - matrix((1 / alpha - 1) / n, n, n) %*% D
-all.equal(as.matrix(X), as.matrix(X_2),
-          check.attributes = FALSE)
-```
-
-OK, so where does that leave us?
-
-Try something like the following. Recall `ILSR` computes an approximate Bradley--Terry maximum likelihood estimate.
+So we test this out as follows. (Recall `ILSR` computes an approximate Bradley--Terry maximum likelihood estimate.)
 
 ```{r}
-X_pseudo <- Matrix::t(alpha * Matrix::t(X) + (1 - alpha) * Matrix::colSums(X) / n)
-plot(Scroogefactor(X, alpha), ILSR(X))
+alpha <- runif(1) # in (0, 1)
+Q_pseudo <- alpha * Q + (1 - alpha) * Matrix::Matrix(1, n, n) %*% D / n
+plot(Scroogefactor(Q, alpha), ILSR(Q))
 abline(0, 1)
-cor(Scroogefactor(X, alpha), ILSR(X))
-plot(Scroogefactor(X, alpha), ILSR(X_pseudo))
+cor(Scroogefactor(Q, alpha), ILSR(Q))
+plot(Scroogefactor(Q, alpha), ILSR(Q_pseudo))
 abline(0, 1)
-cor(Scroogefactor(X, alpha), ILSR(X_pseudo))
+cor(Scroogefactor(Q, alpha), ILSR(Q_pseudo))
 ```
 
-Pretty close but not 100% exact!
+## Symmetrizable matrices
+
+A matrix $Q$ is symmetrizable if there exists an invertible diagonal matrix $A$ and a symmetric matrix $S$ such that $X = AS$. Symmetrizability appears to be synonymous with quasi-symmetry. The diagonal matrix is called the symmetrizer matrix [@Dias2015].
+
+A matrix $Q$ is symmetrizable if and only if, for $k\geq 3$ and any finite sequence $(i_1, i_2, \dots, i_k)$ it satisfies
+\[q_{i_1 i_2} \cdot q_{i_2 i_3} \cdot \dots \cdot q_{i_k i_1} = q_{i_2 i_1} \cdot q_{i_3 i_2} \cdot \dots \cdot q_{i_1 i_k}.
+\]
+
+The following algorithm, proposed in @Dias2015, determines whether a matrix is symmetrizable or not and, if so, returns the diagonal matrix $A$ in $O(n^2)$ time.
+
+```{r symmetrizablematrix}
+SymmetrizableMatrix <- function(Q) {
+  stopifnot(length(dim(Q)) == 2 & !diff(dim(Q)))
+  n <- nrow(Q)
+  A <- Matrix::Diagonal(n, 0)
+  TT <- 1:n
+  iter <- 0
+  while(length(TT) > 0) {
+    iter <- iter + 1
+    if (iter > n^2) stop('Failed to halt')
+    i <- TT[1]
+    TT <- TT[-1]
+    if (A[i, i] == 0) A[i, i] <- 1
+    for (j in TT) {
+      if (Q[i, j] * Q[j, i] == 0) {
+        if (Q[i, j] + Q[j, i] != 0) {
+          return(FALSE)
+        }
+      } else {
+        TT <- c(j, TT[TT != j]) # Move j to first position of T
+        if (A[j, j] != 0) {
+          if ((A[i, i] * Q[i, j]) != (A[j, j] * Q[j, i])) {
+            return(FALSE)
+          }
+        } else A[j, j] <- (A[i, i] * Q[i, j]) / Q[j, i]
+      }
+    }
+  }
+  message('Matrix is symmetrizable. Returning symmetrizer matrix...')
+  return(A)
+}
+```
+
+Test:
+
+```{r}
+S <- attr(rquasisymmetric(5, dens = 1), 'S')
+A <- diag(sample(1:10, 5, TRUE))
+Q <- A %*% S
+SymmetrizableMatrix(Q)
+```
+
+And the **true** $A^{-1}$ was:
+
+```{r}
+solve(A)
+```
+
+## References
