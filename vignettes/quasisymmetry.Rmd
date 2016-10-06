@@ -82,10 +82,10 @@ So far we have chosen the argument `alpha = 1` in the `PageRank` function. This 
 
 For `alpha` < 1 in PageRank is there an equivalent adjustment that will retrieve exactly the same vector for the Bradley--Terry model?
 
-Assuming quasi-symmetry, PageRank involves computing the leading eigenvector of
+PageRank involves computing the leading eigenvector of the "Google matrix",
 
 \[
-\alpha Q D^{-1}   + (1-\alpha) \frac1n e e^T.
+G := \alpha Q D^{-1}   + (1-\alpha) \frac1n e e^T.
 \]
 
 We know that the *Scroogefactor*, defined as PageRank per out-link, retrieves the vector $a$ when $Q$ is quasi-symmetric and PageRank is undamped. This can be extended to deal with damping, as follows.
@@ -109,6 +109,43 @@ plot(Scroogefactor(Q, alpha), ILSR(Q_pseudo))
 abline(0, 1)
 cor(Scroogefactor(Q, alpha), ILSR(Q_pseudo))
 ```
+
+By matrix similarity, damped Scroogefactor $D^{-1}\pi_\alpha$ is equivalent to calculating the leading eigenvector of
+\[\widetilde{G} := \alpha D^{-1} Q + (1 - \alpha) \frac1n D^{-1} ee^T D.\] It is easy to see that $G$ and $\widetilde{G}$ are similar: $\widetilde{G} = D^{-1} G D$ and so $G = D \widetilde{G} D^{-1}$.
+
+## Proving the relationship between quasi-symmetry and eigenvector centrality
+
+In the undamped case, it is easy to show that Scroogefactor (i.e. scaled PageRank) retrieves the true diagonal component of a quasi-symmetric matrix. We know that $D^{-1} Q$ and $Q D^{-1}$ are similar, and $Q D^{-1}$ is column-stochastic so its largest eigenvalue is 1, which means the largest eigenvalue of $D^{-1}Q$ is also 1.
+
+Here we show that the diagonal component of $Q$, represented by the vector $Ae = \mu$ is equal to the leading eigenvector of $D^{-1} Q$:
+
+\[\begin{aligned}
+D^{-1}Q \mu
+&= D^{-1} A S A e \\
+&= D^{-1} A (e^T A S)^T \\
+&= A D^{-1} D e \\
+&= Ae \\
+&= \mu.
+\end{aligned}\]
+
+In other words, the Scroogefactor (eigenvector) retrieves $A$ exactly in the undamped quasi-symmetric case.
+
+What about the damped case? We want to show that the Bradley--Terry parameter vector (diagonal component) of $\alpha Q + (1-\alpha)\frac1n ee^T D$ is the leading eigenvector of $\widetilde{G}$.
+
+However, it is not immediately clear how to write this vector down in closed form (whereas in the undamped case it was simply $\mu:=Ae$). Is $GD$ quasi-symmetric? If so, we could simply substitute $GD$ for $Q$ in the equations above and the result would follow.
+
+In general, the sum of two quasi-symmetric matrices is not quasi-symmetric.
+
+We have \[\begin{aligned}
+GD &= \alpha Q + (1-\alpha)\frac1n ee^T D \\
+&= \alpha Q + (1-\alpha)\frac1n ee^T \operatorname{diag}(e^TQ) \\
+&= \alpha Q + (1-\alpha)\frac1n ee^T Q \\
+&= \left[\alpha I + (1-\alpha)\frac1n ee^T \right] Q
+\end{aligned}\]
+
+where the operator in the square brackets is symmetric, doubly stochastic and diagonally dominant.
+
+Perhaps there is a more general type of matrices, not necessarily quasi-symmetric to which this relation belongs.
 
 ## Symmetrizable matrices
 
