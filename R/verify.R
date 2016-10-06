@@ -1,34 +1,32 @@
-#' @title Verify if two numbers are approximately equal
+#' @title Verify if two vectors are approximately equal
 #'
 #' @description
-#' Rounds a pair of objects to 5 decimal places
-#'   and tests for equality, elementwise.
+#' Returns \code{TRUE} if the vectors are about the same, or the mean relative difference if not.
 #'
 #' @details
-#' For an infix operator, use \code{a \%=\% b}.
-#'   For more conventional evaluation, try \code{verify(a, b)}.
+#' The \code{\%=\%} function provides a quick infix (binary) version of \code{\link{all.equal}}
+#' with the \code{tolerance} set to \code{1e-6} and \code{attributes} and \code{names} ignored.
+#' It is useful for simulation results and other approximations that usually
+#' won't be exactly equal on a computer using floating-point arithmetic.
+#'
+#' Be aware that some binary operators, such as \code{`/`} take precedence,
+#' so make sure to wrap \code{a} and \code{b} in brackets where appropriate.
+#' Use \code{verify(a, b)} for a conventional prefix operator.
 #'
 #' @param a the first vector to be compared
 #' @param b the second vector to be compared
 #'
 #' @examples
-#' pi %=% 3.141593
-#' 0.333333 %=% (1/3)
-#' all(1:5 + 1e-6 %=% 1:5)
-#' verify(0.7777777, 7/9)
+#' 0.3333333 %=% (1/3)
+#' verify(pi, 3.14159)
+#' (1:5 + 1e-6) %=% 1:5
+#' mean(rnorm(1e6, sd = 1e-3)) %=% 0
 #'
-#' @aliases approx
+#' @rdname verify
 #' @seealso \code{\link{all.equal}} \code{\link{Comparison}} \code{\link{identical}}
 #'
 #' @export
-verify <- function(a, b) {
-  round(a, 5) == round(b, 5)
-}
-
+`%=%` <- function(a, b) all.equal(a, b, tolerance = 1e-6, check.attributes = FALSE, check.names = FALSE)
 #' @rdname verify
 #' @export
-isapprox <- verify
-
-#' @rdname verify
-#' @export
-`%=%` <- verify
+verify <- `%=%`
