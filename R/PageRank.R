@@ -21,6 +21,8 @@
 #'
 #' @importFrom rARPACK eigs
 #'
+#' @family network centrality estimators
+#'
 #' @examples
 #' PageRank(citations)
 #'
@@ -66,6 +68,8 @@ PageRank <- function(C,
 #' @param sort logical. Reorder the indices in descending order of Scroogefactor score
 #'
 #' @return A vector equivalent to PageRank per reference, scaled to sum to one
+#'
+#' @family network centrality estimators
 #'
 #' @references
 #' Pinski, G., & Narin, F. (1976).

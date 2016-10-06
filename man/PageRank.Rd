@@ -48,4 +48,9 @@ Page, L., Brin, S., Motwani, R., & Winograd, T. (1999).
 The PageRank citation ranking: bringing order to the web.
 Technical Report, Stanford InfoLab.
 }
+\seealso{
+Other network centrality estimators: \code{\link{BTscores}},
+  \code{\link{BradleyTerry}}, \code{\link{ILSR}},
+  \code{\link{Scroogefactor}}
+}
 

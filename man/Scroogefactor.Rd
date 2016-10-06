@@ -35,4 +35,9 @@ Citation influence for journal aggregates of scientific publications: Theory, wi
 \emph{Information Processing & Management},
 12(5), 297--312.
 }
+\seealso{
+Other network centrality estimators: \code{\link{BTscores}},
+  \code{\link{BradleyTerry}}, \code{\link{ILSR}},
+  \code{\link{PageRank}}
+}
 
