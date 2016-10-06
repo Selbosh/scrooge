@@ -80,13 +80,38 @@ ILSR <- function(C, sort = FALSE, maxits = 100, tolerance = 1e-6, verbose = FALS
 #' 48(9), 1--21.
 #'
 #' @export
-BradleyTerry <- function(C, sort = FALSE) {
+BT2 <- function(C, sort = FALSE) {
   bin <- BradleyTerry2::countsToBinomial(C)
   BT_model <- BradleyTerry2::BTm(cbind(win1, win2), player1, player2, data = bin)
   mu <- setNames(c(0, coef(BT_model)), colnames(C))
   mu <- mu - mean(mu)
   expmu <- exp(mu) / sum(exp(mu))
   if(sort) sort(expmu, decreasing = TRUE) else expmu
+}
+#' @rdname BT2
+#' @export
+BT <- function(C) {
+  n <- nrow(C)
+  Y <- as.matrix(cbind(win1 = t(C)[lower.tri(C)],
+                       win2 = C[lower.tri(C)]))
+  npairs <- nrow(Y)
+  # +1 for player1, -1 for player2, 0 otherwise
+  X <- matrix(0, npairs, n)
+  colnames(X) <- colnames(C)
+  X[cbind(1:npairs, col(C)[lower.tri(C)])] <- 1
+  X[cbind(1:npairs, row(C)[lower.tri(C)])] <- -1
+  X <- X[, -1] # First column redundant
+  glm(Y ~ -1 + X, family = quasibinomial)
+}
+
+#' @rdname BT2
+#' @export
+BTscores <- function(X) {
+  fit <- BT(X)
+  scores <- setNames(c(0, coef(fit)), colnames(X))
+  scores <- scores - mean(scores)
+  expscores <- exp(scores) / sum(exp(scores))
+  expscores
 }
 
 #' Calculate the log-likelihood of a Bradley-Terry model

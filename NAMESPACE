@@ -2,7 +2,9 @@
 
 S3method(print,asciiplot)
 export("%=%")
-export(BradleyTerry)
+export(BT)
+export(BT2)
+export(BTscores)
 export(ILSR)
 export(PageRank)
 export(Scroogefactor)
