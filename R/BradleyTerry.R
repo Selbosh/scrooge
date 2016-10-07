@@ -3,7 +3,8 @@
 #' Fits Bradley--Terry model, also known as a quasi-symmetry model,
 #' to paired comparison data via maximum likelihood estimation.
 #'
-#' This implementation avoids calling \code{BradleyTerry2} and instead fits the \code{\link{glm}} directly.
+#' This implementation avoids calling \code{\link[BradleyTerry2]{BTm}} and
+#' instead fits the \code{\link[stats]{glm}} directly.
 #'
 #' @param C a square matrix of paired comparisons
 #'
@@ -62,7 +63,7 @@ BTscores <- function(X, sort = FALSE) {
 
 #' Estimate the parameters of a Bradley--Terry model
 #'
-#' A one-liner to extract model parameters from \code{BradleyTerry2}.
+#' A one-liner to fit and extract model parameters from a \code{\link[BradleyTerry2]{BTm}} model
 #' Deprecated: use \code{\link{BradleyTerry}} or \code{\link{BTscores}} instead.
 #'
 #' Previously a placeholder function, now remains for reference and comparison purposes.

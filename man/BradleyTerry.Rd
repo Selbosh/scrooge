@@ -17,7 +17,8 @@ Fits Bradley--Terry model, also known as a quasi-symmetry model,
 to paired comparison data via maximum likelihood estimation.
 }
 \details{
-This implementation avoids calling \code{BradleyTerry2} and instead fits the \code{\link{glm}} directly.
+This implementation avoids calling \code{\link[BradleyTerry2]{BTm}} and
+instead fits the \code{\link[stats]{glm}} directly.
 }
 \examples{
 BradleyTerry(citations)

@@ -12,7 +12,7 @@ BT2(C, sort = FALSE)
 \item{sort}{logical. If \code{TRUE}, sort the weights in descending order}
 }
 \description{
-A one-liner to extract model parameters from \code{BradleyTerry2}.
+A one-liner to fit and extract model parameters from a \code{\link[BradleyTerry2]{BTm}} model
 Deprecated: use \code{\link{BradleyTerry}} or \code{\link{BTscores}} instead.
 }
 \details{
