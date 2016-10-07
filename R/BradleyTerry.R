@@ -23,6 +23,7 @@
 #'
 #' @export
 BradleyTerry <- function(C) {
+  C <- as.matrix(C) # Bit of a hack for now
   n <- nrow(C)
   Y <- as.matrix(cbind(win1 = t(C)[lower.tri(C)],
                        win2 = C[lower.tri(C)]))
@@ -93,7 +94,7 @@ BTscores <- function(X, sort = FALSE) {
 #'
 #' @export
 BT2 <- function(C, sort = FALSE) {
-  bin <- BradleyTerry2::countsToBinomial(C)
+  bin <- BradleyTerry2::countsToBinomial(as.matrix(C))
   BT_model <- BradleyTerry2::BTm(outcome = cbind(win1, win2), player1 = player1, player2 = player2, data = bin)
   mu <- setNames(c(0, coef(BT_model)), colnames(C))
   mu <- mu - mean(mu)
