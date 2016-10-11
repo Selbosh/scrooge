@@ -15,7 +15,7 @@
 #' rquasisymmetric(5)
 rquasisymmetric <- function(n,
                             lambda = 10,
-                            density = 0.75,
+                            density = 1.00,
                             dimnames = list(cited = paste0('P', 1:n),
                                             citing = paste0('P', 1:n))) {
   S <- Matrix::rsparsematrix(n, n,

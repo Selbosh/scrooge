@@ -4,7 +4,7 @@
 \alias{rquasisymmetric}
 \title{Simulate a quasi-symmetric matrix}
 \usage{
-rquasisymmetric(n, lambda = 10, density = 0.75, dimnames = list(cited =
+rquasisymmetric(n, lambda = 10, density = 1, dimnames = list(cited =
   paste0("P", 1:n), citing = paste0("P", 1:n)))
 }
 \arguments{

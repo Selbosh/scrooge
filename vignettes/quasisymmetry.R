@@ -6,7 +6,7 @@ library(scrooge)
 
 ## ----generate_quasisymm--------------------------------------------------
 n <- 100
-Q <- rquasisymmetric(n, density = 1)
+Q <- rquasisymmetric(n)
 D <- Matrix::Diagonal(n, Matrix::colSums(Q))
 
 ## ----get_attributes, results = 'hide', message = FALSE-------------------
@@ -64,7 +64,7 @@ SymmetrizableMatrix <- function(Q) {
 }
 
 ## ------------------------------------------------------------------------
-S <- attr(rquasisymmetric(5, dens = 1), 'S')
+S <- attr(rquasisymmetric(5), 'S')
 A <- diag(sample(1:10, 5, TRUE))
 Q <- A %*% S
 SymmetrizableMatrix(Q)

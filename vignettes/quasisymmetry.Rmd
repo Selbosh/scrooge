@@ -48,7 +48,7 @@ A square matrix $Q$ is quasi-symmetric if it can be decomposed in the form $Q = 
 
 ```{r generate_quasisymm}
 n <- 100
-Q <- rquasisymmetric(n, density = 1)
+Q <- rquasisymmetric(n)
 D <- Matrix::Diagonal(n, Matrix::colSums(Q))
 ```
 
@@ -193,7 +193,7 @@ SymmetrizableMatrix <- function(Q) {
 Test:
 
 ```{r}
-S <- attr(rquasisymmetric(5, dens = 1), 'S')
+S <- attr(rquasisymmetric(5), 'S')
 A <- diag(sample(1:10, 5, TRUE))
 Q <- A %*% S
 SymmetrizableMatrix(Q)
