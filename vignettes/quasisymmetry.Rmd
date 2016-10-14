@@ -130,6 +130,17 @@ D^{-1}Q \mu
 
 In other words, the Scroogefactor (eigenvector) retrieves $A$ exactly in the undamped quasi-symmetric case.
 
+A similar proof is clear using summation notation. A vector $\tilde\mu$ is an eigenvector of $D^{-1}Q$ with eigenvalue 1 if and only if the following equation holds:
+\[
+\sum_{j=1}^n q_{ij} \mu_j = \tilde\mu_i \sum_{j=1}^n q_{ji} \hspace{1em}\text{for all $i$}.
+\]
+
+But if $Q=DS$ and we choose $\tilde\mu_i = d_{ii}$ then the left hand side is
+\[
+\sum_{j=1}^n d_{ii} s_{ij} d_{jj} = d_{ii} \sum_{j=1}^n s_{ji} d_{jj} = \tilde\mu_i \sum_{j=1}^n q_{ji},
+\]
+giving the right hand side, as required.
+
 What about the damped case? We want to show that the Bradley--Terry parameter vector (diagonal component) of $\alpha Q + (1-\alpha)\frac1n ee^T D$ is the leading eigenvector of $\widetilde{G}$.
 
 However, it is not immediately clear how to write this vector down in closed form (whereas in the undamped case it was simply $\mu:=Ae$). Is $GD$ quasi-symmetric? If so, we could simply substitute $GD$ for $Q$ in the equations above and the result would follow.
