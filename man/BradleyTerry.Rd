@@ -4,21 +4,25 @@
 \alias{BradleyTerry}
 \title{Fit a Bradley--Terry model}
 \usage{
-BradleyTerry(C)
+BradleyTerry(C, family = quasibinomial)
 }
 \arguments{
 \item{C}{a square matrix of paired comparisons}
+
+\item{family}{a description of the error distribution and link function to be used. See \code{\link[stats]{family}}}
 }
 \value{
 An object of class \code{"glm"}
 }
 \description{
 Fits Bradley--Terry model, also known as a quasi-symmetry model,
-to paired comparison data via maximum likelihood estimation.
+to paired comparison data via maximum (quasi) likelihood estimation.
 }
 \details{
 This implementation avoids calling \code{\link[BradleyTerry2]{BTm}} and
 instead fits the \code{\link[stats]{glm}} directly.
+By default, the model is fitted by quasi-likelihood (allowing non-integer counts) with a logit link.
+To fit by maximum likelihood instead, set the \code{\link[stats]{family}} argument to \code{binomial}.
 }
 \examples{
 BradleyTerry(citations)

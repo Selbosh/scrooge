@@ -1,12 +1,15 @@
 #' Fit a Bradley--Terry model
 #'
 #' Fits Bradley--Terry model, also known as a quasi-symmetry model,
-#' to paired comparison data via maximum likelihood estimation.
+#' to paired comparison data via maximum (quasi) likelihood estimation.
 #'
 #' This implementation avoids calling \code{\link[BradleyTerry2]{BTm}} and
 #' instead fits the \code{\link[stats]{glm}} directly.
+#' By default, the model is fitted by quasi-likelihood (allowing non-integer counts) with a logit link.
+#' To fit by maximum likelihood instead, set the \code{\link[stats]{family}} argument to \code{binomial}.
 #'
 #' @param C a square matrix of paired comparisons
+#' @param family a description of the error distribution and link function to be used. See \code{\link[stats]{family}}
 #'
 #' @return An object of class \code{"glm"}
 #'
@@ -23,7 +26,7 @@
 #' 39(3/4), 324--345.
 #'
 #' @export
-BradleyTerry <- function(C) {
+BradleyTerry <- function(C, family = quasibinomial) {
   C <- as.matrix(C) # Bit of a hack for now
   n <- nrow(C)
   Y <- as.matrix(cbind(win1 = t(C)[lower.tri(C)],
@@ -35,7 +38,7 @@ BradleyTerry <- function(C) {
   X[cbind(1:npairs, col(C)[lower.tri(C)])] <- 1
   X[cbind(1:npairs, row(C)[lower.tri(C)])] <- -1
   X <- X[, -1] # First column redundant
-  glm(Y ~ -1 + X, family = quasibinomial)
+  glm(Y ~ -1 + X, family = family)
 }
 
 #' Estimate the parameters of a Bradley--Terry model
