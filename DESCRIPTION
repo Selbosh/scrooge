@@ -7,7 +7,7 @@ Maintainer: David A. Selby <d.selby@warwick.ac.uk>
 Description: Utilities for the author's doctoral research in bibliometrics.
 License: GPL
 LazyData: TRUE
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 Imports:
     BradleyTerry2,
     rARPACK,
