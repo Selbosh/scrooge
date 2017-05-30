@@ -53,4 +53,3 @@ Other network centrality estimators: \code{\link{BTscores}},
   \code{\link{BradleyTerry}}, \code{\link{ILSR}},
   \code{\link{Scroogefactor}}
 }
-

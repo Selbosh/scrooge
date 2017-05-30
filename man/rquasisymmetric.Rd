@@ -25,4 +25,3 @@ Simulate a quasi-symmetric matrix
 \examples{
 rquasisymmetric(5)
 }
-

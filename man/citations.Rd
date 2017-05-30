@@ -2,8 +2,8 @@
 % Please edit documentation in R/citation-data.R
 \docType{data}
 \name{citations}
-\alias{articles}
 \alias{citations}
+\alias{articles}
 \title{Academic citations dataset}
 \format{An object of class \code{matrix} with 47 rows and 47 columns.}
 \usage{
@@ -28,4 +28,3 @@ Statistical modelling of citation exchange between statistics journals.
 \code{\link[BradleyTerry2]{citations}}, a similar, smaller dataset in \code{BradleyTerry2}
 }
 \keyword{datasets}
-

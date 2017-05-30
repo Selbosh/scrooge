@@ -40,4 +40,3 @@ Rank analysis of incomplete block designs: I. The method of paired comparisons.
 \seealso{
 BradleyTerry BTscores
 }
-

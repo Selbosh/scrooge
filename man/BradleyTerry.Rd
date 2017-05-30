@@ -35,12 +35,11 @@ Rank analysis of incomplete block designs: I. The method of paired comparisons.
 39(3/4), 324--345.
 }
 \seealso{
-Other Bradley-Terry model utility functions: \code{\link{hessianBT}},
-  \code{\link{loglikelihood}}, \code{\link{pseudocount}},
-  \code{\link{vcovBT}}
-
 Other network centrality estimators: \code{\link{BTscores}},
   \code{\link{ILSR}}, \code{\link{PageRank}},
   \code{\link{Scroogefactor}}
-}
 
+Other Bradley-Terry model utility functions: \code{\link{hessianBT}},
+  \code{\link{loglikelihood}}, \code{\link{pseudocount}},
+  \code{\link{vcovBT}}
+}

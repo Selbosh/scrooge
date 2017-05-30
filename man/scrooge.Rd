@@ -4,6 +4,7 @@
 \name{scrooge}
 \alias{scrooge}
 \alias{scrooge-package}
+\alias{scrooge-package}
 \title{Helper functions by David A. Selby}
 \description{
 A fairly random and largely unrelated assortment
@@ -17,4 +18,3 @@ The package includes \code{\link{verify}}, which is a handy binary operator
   variance-covariance matrices for the Bradley--Terry model. For some some visualisation
   fun, try \code{\link{asciiplot}}.
 }
-

@@ -54,4 +54,3 @@ Other plot constructors: \code{\link{linearScale}},
 \concept{
 ascii textplot utf8plot unicodeplot
 }
-

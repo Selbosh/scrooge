@@ -19,4 +19,3 @@ Other Bradley-Terry model utility functions: \code{\link{BradleyTerry}},
   \code{\link{loglikelihood}}, \code{\link{pseudocount}},
   \code{\link{vcovBT}}
 }
-

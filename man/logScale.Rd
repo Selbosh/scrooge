@@ -21,4 +21,3 @@ Transform values on a logarithmic scale
 Other plot constructors: \code{\link{asciiplot}},
   \code{\link{linearScale}}
 }
-

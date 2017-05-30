@@ -26,4 +26,3 @@ Other network centrality estimators: \code{\link{BradleyTerry}},
   \code{\link{ILSR}}, \code{\link{PageRank}},
   \code{\link{Scroogefactor}}
 }
-

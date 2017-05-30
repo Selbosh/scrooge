@@ -37,4 +37,3 @@ mean(rnorm(1e6, sd = 1e-3)) \%=\% 0
 \seealso{
 \code{\link{all.equal}} \code{\link{Comparison}} \code{\link{identical}}
 }
-

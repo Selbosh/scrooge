@@ -38,4 +38,3 @@ rmultihyper(citations, k)
 \seealso{
 \code{\link{rhyper}} for sampling two different colours of balls from a single urn (equivalent to sampling one colour from two urns)
 }
-

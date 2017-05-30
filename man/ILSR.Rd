@@ -43,4 +43,3 @@ Other network centrality estimators: \code{\link{BTscores}},
   \code{\link{BradleyTerry}}, \code{\link{PageRank}},
   \code{\link{Scroogefactor}}
 }
-
