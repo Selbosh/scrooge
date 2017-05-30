@@ -104,7 +104,7 @@ BTscores <- function(X, sort = FALSE) {
 #' @export
 BT2 <- function(C, sort = FALSE) {
   bin_df <- BradleyTerry2::countsToBinomial(as.matrix(C))
-  BT_model <- BradleyTerry2::BTm(outcome = cbind(win1, win2), player1 = player1, player2 = player2)
+  BT_model <- BradleyTerry2::BTm(outcome = cbind(win1, win2), player1 = player1, player2 = player2, data = bin_df)
   mu <- setNames(c(0, coef(BT_model)), colnames(C))
   mu <- mu - mean(mu)
   expmu <- exp(mu) / sum(exp(mu))
