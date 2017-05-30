@@ -25,6 +25,8 @@
 #' In \emph{Advances in Neural Information Processing Systems},
 #' 172--180.
 #'
+#' @importFrom utils tail
+#'
 #' @export
 ILSR <- function(C, sort = FALSE, maxits = 100, tolerance = 1e-6, verbose = FALSE){
   n <- nrow(C)

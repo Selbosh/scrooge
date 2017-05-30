@@ -4,7 +4,7 @@
 \alias{BradleyTerry}
 \title{Fit a Bradley--Terry model}
 \usage{
-BradleyTerry(C, family = quasibinomial)
+BradleyTerry(C, family = stats::quasibinomial)
 }
 \arguments{
 \item{C}{a square matrix of paired comparisons}

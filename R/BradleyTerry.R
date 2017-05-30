@@ -25,8 +25,10 @@
 #' \emph{Biometrika},
 #' 39(3/4), 324--345.
 #'
+#' @importFrom stats glm quasibinomial
+#'
 #' @export
-BradleyTerry <- function(C, family = quasibinomial) {
+BradleyTerry <- function(C, family = stats::quasibinomial) {
   C <- as.matrix(C) # Bit of a hack for now
   n <- nrow(C)
   Y <- as.matrix(cbind(win1 = t(C)[lower.tri(C)],
@@ -54,6 +56,8 @@ BradleyTerry <- function(C, family = quasibinomial) {
 #'
 #' @examples
 #' BTscores(citations)
+#'
+#' @importFrom stats coef setNames
 #'
 #' @export
 BTscores <- function(X, sort = FALSE) {
@@ -84,6 +88,7 @@ BTscores <- function(X, sort = FALSE) {
 #' abline(0, 1)
 #'
 #' @importFrom BradleyTerry2 countsToBinomial BTm
+#' @importFrom stats setNames
 #'
 #' @references
 #' Heather Turner, David Firth (2012).
@@ -98,8 +103,8 @@ BTscores <- function(X, sort = FALSE) {
 #'
 #' @export
 BT2 <- function(C, sort = FALSE) {
-  bin <- BradleyTerry2::countsToBinomial(as.matrix(C))
-  BT_model <- BradleyTerry2::BTm(outcome = cbind(win1, win2), player1 = player1, player2 = player2, data = bin)
+  bin_df <- BradleyTerry2::countsToBinomial(as.matrix(C))
+  BT_model <- BradleyTerry2::BTm(outcome = cbind(win1, win2), player1 = player1, player2 = player2)
   mu <- setNames(c(0, coef(BT_model)), colnames(C))
   mu <- mu - mean(mu)
   expmu <- exp(mu) / sum(exp(mu))

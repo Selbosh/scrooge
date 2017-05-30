@@ -25,6 +25,8 @@
 #' @references
 #' \url{http://stats.stackexchange.com/questions/199948/random-generation-from-multivariate-hypergeometric-distribution}
 #'
+#' @importFrom stats rhyper
+#'
 #' @export
 rmultihyper <- function(n, k) {
   N <- sum(n)

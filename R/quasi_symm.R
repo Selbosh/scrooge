@@ -6,6 +6,7 @@
 #' @param dimnames names of the matrix dimensions, as a list
 #'
 #' @importFrom Matrix rsparsematrix drop0
+#' @importFrom stats rnorm runif setNames
 #'
 #' @return A sparse, quasi-symmetric matrix of dimension \code{n} by \code{n}.
 #'
@@ -22,11 +23,10 @@ rquasisymmetric <- function(n,
                              density = density,
                              symmetric = TRUE,
                              dimnames = dimnames,
-                             rand.x = function(N) rpois(N, lambda))
-  a <- runif(n)
+                             rand.x = function(N) exp(rnorm(N)))
+  a <- exp(runif(n))
   a <- setNames(a / sum(a), dimnames$cited)
-  A <- diag(a)
-  X <- Matrix::drop0(A %*% S)
+  X <- Matrix::drop0(a * S)
   attr(X, 'S') <- S
   attr(X, 'a') <- a
   dimnames(X) <- dimnames
