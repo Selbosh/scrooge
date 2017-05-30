@@ -1,0 +1,54 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+library(scrooge)
+```
+
+# Statistical modelling of heterogeneous citation networks
+
+An R package containing utilities useful for the author's doctoral research in bibliometrics.
+
+Install and load the package using
+
+```r
+devtools::install_github('Selbosh/scrooge')
+library(scrooge)
+```
+
+## Verify if two numbers are approximately equal
+
+```{r}
+1 %=% 1.0000000000000000001
+pi %=% 3.14159
+```
+
+## Bibliometric datasets
+
+```{r}
+head(articles)
+```
+
+## Journal ranking metrics
+
+```{r}
+head(names(ILSR(citations, sort = TRUE)))
+head(names(PageRank(citations, sort = TRUE)))
+head(names(Scroogefactor(citations, sort = TRUE)))
+```
+
+For comparison, here are the results of analysis of the same data using the `BradleyTerry2` package and the Bradley--Terry model:
+
+```{r}
+head(names(BTscores(citations)))
+cor(BTscores(citations), ILSR(citations))
+```
+

@@ -1,88 +1,58 @@
-# Statistical modelling of heterogeneous citation networks
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+Statistical modelling of heterogeneous citation networks
+========================================================
 
 An R package containing utilities useful for the author's doctoral research in bibliometrics.
 
 Install and load the package using
 
-```r
+``` r
 devtools::install_github('Selbosh/scrooge')
 library(scrooge)
 ```
 
-## Verify if two numbers are approximately equal
+Verify if two numbers are approximately equal
+---------------------------------------------
 
-```r
+``` r
 1 %=% 1.0000000000000000001
-## [1] TRUE
-
+#> [1] TRUE
 pi %=% 3.14159
-## [1] TRUE
+#> [1] TRUE
 ```
 
-## Visualise data without a graphical device
+Bibliometric datasets
+---------------------
 
-```r
-asciiplot(ggplot2::diamonds, aes=list(x='carat', y='price', shape='cut'), geom='point')
-##                   - -   . . . . + + + + - . + + + - + .   X   +           +                     O             
-##                   - X . - - + . . - . O . + . + + . - . .                               O                   O 
-##                  -   +   + - . + - - + + + + + + . . . -     O                                               
-##                 . X   . . . . . . . + + + O + . + . . +       .       O     +       -                         
-##                   + . + . - + . . + - . . . . . + . -   + +   -                     +                         
-##                 . . . + - - - + - . + - X + . + + + X   -     X                                               
-##                   . . + + + + + - + - + + . + + + O O X                                                       
-##                   . + + . . . . . . + + + + + X X O .   .     +                                               
-##                   - - . O - + . . - + . X + - + . + O             . +     .                                   
-##                 - . . . + + - + - + + . X . X + . -     .     X             O                                 
-##                 - . . . . . + . + . + X X . - + + +   + +     X                                               
-##               . + + . . . + . . - + . + . + -     + O -       + O                                             
-##               - - . + - . X - . - + . - O   + .         O                                                     
-##               . - - . . . + + - O X O O X   . - + O   +       O                                               
-##               - + . - - . . . + - + +   X - O     O                                                           
-##         .   - . X . . + X + + + + + O O O O - O         O     -                                               
-##             . - . - . . . + . + X O + O + +   O   O                                                           
-##           . - . - + + + . + . . + O - O O O O                                                                 
-##       O . . . - . + + - - + O X O -                                                                           
-##       . . . . + . X - + . O O                                                                                 
-##       . + - . + O X O + .   X                                                                                 
-##   - . - - . - . + . + O O                                                                                     
-## + . . . . - X . O O                                                                                           
-## X . . . - O X                                                                                                 
-## +  
-```
-
-## Bibliometric datasets
-
-```r
+``` r
 head(articles)
-## articles
-## AmS        49
-## AISM       52
-## AoS       101
-## ANZS       27
-## Bern       60
-## BioJ       53
+#>      articles
+#> AmS        49
+#> AISM       52
+#> AoS       101
+#> ANZS       27
+#> Bern       60
+#> BioJ       53
 ```
 
-## Journal ranking metrics
+Journal ranking metrics
+-----------------------
 
-```r
+``` r
 head(names(ILSR(citations, sort = TRUE)))
-## [1] "JRSS-B" "AoS"    "Bka"    "JASA"   "Bcs"    "JRSS-A"
-
+#> [1] "JRSS-B" "AoS"    "Bka"    "JASA"   "Bcs"    "JRSS-A"
 head(names(PageRank(citations, sort = TRUE)))
-## [1] "JASA"   "AoS"    "JRSS-B" "StMed"  "Bcs"    "Bka"
-
+#> [1] "JASA"   "AoS"    "JRSS-B" "StMed"  "Bcs"    "Bka"
 head(names(Scroogefactor(citations, sort = TRUE)))
-## [1] "JRSS-B" "AoS"    "Bka"    "JASA"   "ISR"    "JRSS-A"
+#> [1] "JRSS-B" "AoS"    "Bka"    "JASA"   "JRSS-A" "Bcs"
 ```
 
 For comparison, here are the results of analysis of the same data using the `BradleyTerry2` package and the Bradley--Terry model:
 
-```r
-head(names(BradleyTerry(citations, sort = TRUE)))
-## [1] "JRSS-B" "AoS"    "Bka"    "JASA"   "Bcs"    "JRSS-A"
-
-cor(mu, log(ILSR(citations)))
-## [1] 1
+``` r
+head(names(BTscores(citations)))
+#> [1] "AmS"  "AISM" "AoS"  "ANZS" "Bern" "BioJ"
+cor(BTscores(citations), ILSR(citations))
+#> [1] 1
 ```
-
