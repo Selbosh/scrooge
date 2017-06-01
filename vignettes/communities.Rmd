@@ -1,0 +1,49 @@
+---
+title: "Fitting log-linear models to players in communities"
+author: "David Selby"
+date: "`r format(Sys.Date(), '%e %B %Y')`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Fitting log-linear models to players in communities}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Suppose each player, \(i\), belongs to a community, \(c_i\). Then we may wish to fit the following model.
+\[\operatorname{logit}\mathbb{P}(i~\text{cites}~j) = \alpha_i(c_j) - \alpha_j(c_i)\]
+
+That is, in each game, player \(i\)'s ability depends on the community of player \(j\) and vice versa.
+
+To implement this in R, try the following (based on [this Gist](https://gist.github.com/Selbosh/71ed6418c93bab43e8abac310f5a3964)).
+
+```{r}
+modelcommunities <- function(C, groups) {
+  n <- nrow(C)
+  ngroups <- length(unique(groups))
+  Y <- as.matrix(cbind(win1 = t(C)[lower.tri(C)],
+                       win2 = C[lower.tri(C)]))
+  npairs <- nrow(Y)
+  X <- matrix(0, npairs, n * ngroups)
+  X[cbind(
+      1:npairs,
+      col(C)[lower.tri(C)] + n * (groups[row(C)[lower.tri(C)]] - 1)
+      )] <- 1
+  X[cbind(
+      1:npairs,
+      row(C)[lower.tri(C)] + n * (groups[col(C)[lower.tri(C)]] - 1)
+      )] <- -1
+  colnames(X) <- varNames <- c(outer(colnames(C), paste0('G', 1:ngroups), paste, sep = '_'))
+  X <- X[, -1] # remove a redundant column
+  
+  glm(Y ~ 0 + X, family = binomial)
+}
+```
+
+Here is an example of using such code.
+
+```{r, eval = FALSE}
+library(scrooge)
+data(citations)
+G <- sample.int(4, nrow(citations), replace = TRUE) # 4 random communities
+modelcommunities(citations, G)
+```
