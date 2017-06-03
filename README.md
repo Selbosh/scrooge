@@ -3,7 +3,7 @@
 Statistical modelling of heterogeneous citation networks
 ========================================================
 
-[![Build Status](https://travis-ci.org/Selbosh/scrooge.svg?branch=master)](https://travis-ci.org/Selbosh/scrooge)
+[![Build Status](https://travis-ci.org/Selbosh/scrooge.svg?branch=master)](https://travis-ci.org/Selbosh/scrooge) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/Selbosh/scrooge?branch=master&svg=true)](https://ci.appveyor.com/project/Selbosh/scrooge)
 
 An R package containing utilities useful for the author's doctoral research in bibliometrics.
 
