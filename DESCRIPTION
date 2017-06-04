@@ -12,7 +12,9 @@ Imports:
     BradleyTerry2,
     rARPACK,
     numDeriv,
-    Matrix
+    Matrix,
+    ggplot2,
+    extrafont
 Suggests:
     testthat,
     knitr,
