@@ -40,9 +40,9 @@ cprofile.dgeMatrix <- function(x, self = TRUE) {
 #' @export
 cprofile.igraph <- function(x, self = TRUE) {
   x <- igraph::as_adjacency_matrix(x, attr = switch(igraph::is.weighted(x), 'weight'))
-  x <- Matrix::t(x) # Because igraph treats matrices as row->col
+  x <- Matrix::t(x)
   if (!self) diag(x) <- 0
-  NextMethod()
+  NextMethod('cprofile', x)
 }
 
 #' Calculate community profiles
