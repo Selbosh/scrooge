@@ -10,6 +10,7 @@
 #' @param idx A journal name or index.
 #' @param citations A square contingency table of citation data.
 #' @param communities A membership vector or igraph \code{communities} object.
+#' @param self logical. Include self-citations? If \code{FALSE}, they will not be counted.
 #'
 #' @examples
 #' cites <- citations[1:6, 1:6]
@@ -22,10 +23,9 @@
 #'
 #' @importFrom quadprog solve.QP
 #' @export
-nearest_point <- function(idx, citations, communities) {
+nearest_point <- function(idx, citations, communities, self = TRUE) {
   stopifnot(length(idx) == 1)
-  diag(citations) <- 0
-  P <- cprofile(citations)
+  P <- cprofile(citations, self = self)
   C <- community_profiles(citations, communities)
   g <- ncol(C) # number of communities
 

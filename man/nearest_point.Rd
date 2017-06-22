@@ -4,7 +4,7 @@
 \alias{nearest_point}
 \title{Calculate nearest point in convex hull}
 \usage{
-nearest_point(idx, citations, communities)
+nearest_point(idx, citations, communities, self = TRUE)
 }
 \arguments{
 \item{idx}{A journal name or index.}
@@ -12,6 +12,8 @@ nearest_point(idx, citations, communities)
 \item{citations}{A square contingency table of citation data.}
 
 \item{communities}{A membership vector or igraph \code{communities} object.}
+
+\item{self}{logical. Include self-citations? If \code{FALSE}, they will not be counted.}
 }
 \description{
 Given a citation matrix and a community structure, this function calculates the point

@@ -3,15 +3,12 @@
 \name{cprofile}
 \alias{cprofile}
 \alias{cprofile.default}
-\alias{cprofile.dgeMatrix}
 \alias{cprofile.igraph}
 \title{Calculate citation profiles}
 \usage{
 cprofile(x, self)
 
 \method{cprofile}{default}(x, self = TRUE)
-
-\method{cprofile}{dgeMatrix}(x, self = TRUE)
 
 \method{cprofile}{igraph}(x, self = TRUE)
 }

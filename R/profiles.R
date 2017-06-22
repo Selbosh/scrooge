@@ -27,20 +27,11 @@ cprofile.default <- function(x, self = TRUE) {
 }
 
 #' @rdname cprofile
-#' @importFrom Matrix colSums
-#' @export
-cprofile.dgeMatrix <- function(x, self = TRUE) {
-  if (!self) diag(x) <- 0
-  sweep(x, 2, Matrix::colSums(x), '/')
-}
-
-#' @rdname cprofile
 #' @importFrom igraph as_adjacency_matrix is.weighted
-#' @importFrom Matrix t
 #' @export
 cprofile.igraph <- function(x, self = TRUE) {
   x <- igraph::as_adjacency_matrix(x, attr = switch(igraph::is.weighted(x), 'weight'))
-  x <- Matrix::t(x)
+  x <- t(as.matrix(x))
   if (!self) diag(x) <- 0
   NextMethod('cprofile', x)
 }

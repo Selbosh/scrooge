@@ -4,6 +4,12 @@ cites6 <- citations[1:6, 1:6]
 lst <- list(`1` = 'AoS', `2` = 'Bern', `3` = c('AmS', 'AISM', 'ANZS', 'BioJ'))
 vec <- c(3, 3, 1, 3, 2, 3)
 
+ig6_multi <- igraph::graph_from_adjacency_matrix(t(cites6), weighted = NULL)
+ig6_weighted <- igraph::graph_from_adjacency_matrix(t(cites6), weighted = TRUE)
+
+ig_multi <- igraph::graph_from_adjacency_matrix(t(citations), weighted = NULL)
+ig_weighted <- igraph::graph_from_adjacency_matrix(t(citations), weighted = TRUE)
+
 test_that("Journal profiles are probabilities", {
   expect_true(all(cprofile(citations) >= 0))
   expect_true(all(cprofile(citations) <= 1))
@@ -18,8 +24,6 @@ test_that("Journal profiles have same dimension as citations", {
 })
 
 test_that("Profiles for igraph objects are consistent", {
-  ig_multi <- igraph::graph_from_adjacency_matrix(t(citations), weighted = NULL)
-  ig_weighted <- igraph::graph_from_adjacency_matrix(t(citations), weighted = TRUE)
   expect_equivalent(as.matrix(cprofile(ig_multi)), cprofile(citations))
   expect_equal(cprofile(ig_multi), cprofile(ig_weighted))
 })
@@ -63,4 +67,11 @@ test_that("Coordinates of nearest point are a convex combination of communities"
   expect_equal(sum(nearest_point('AoS', cites6, lst)$solution), 1)
   expect_true(all(nearest_point('AISM', cites6, lst)$solution > -1e-15))
   expect_true(all(nearest_point('Bern', cites6, lst)$solution > -1e-15))
+})
+
+test_that("Distances are consistent between igraph and matrix input", {
+  expect_equal(nearest_point('AmS', cites6, lst), nearest_point('AmS', ig6_multi, lst))
+  expect_equal(nearest_point('AmS', cites6, lst), nearest_point('AmS', ig6_weighted, lst))
+  expect_equal(nearest_point('AoS', cites6, lst), nearest_point('AoS', ig6_multi, lst))
+  expect_equal(nearest_point('AoS', cites6, lst), nearest_point('AoS', ig6_weighted, lst))
 })
