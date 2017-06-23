@@ -10,18 +10,17 @@
 #' few citations. Currently journals cannot belong to more than one community at a time.
 #'
 #' @inheritParams cprofile
-#' @param communities an integer vector giving the community of each journal, or a \code{list} of members in each community. See examples.
+#' @param communities an integer vector giving the community of each journal, or an \code{igraph} \code{\link[igraph]{communities}} object
 #'
 #' @return
 #' A matrix of community profiles.
 #' @seealso
 #' \code{\link{cprofile}}, \code{\link{nearest_point}}
 #' @examples
-#' test <- citations[1:6, 1:6]
-#' community_profiles(test, c(3, 3, 1, 3, 2, 3), self = FALSE)
-#' community_profiles(test,
-#'                    list(`1` = 'AoS', `2` = 'Bern', `3` = c('AmS', 'AISM', 'ANZS', 'BioJ')),
-#'                    self = FALSE)
+#' counts <- citations[1:6, 1:6]
+#' comms <- setNames(c(1, 2, 3, 2, 2, 4), colnames(citations))
+#' community_profiles(counts, comms)
+#'
 #' @export
 community_profiles <- function(x, communities, self) {
   UseMethod('community_profiles', communities)
@@ -29,20 +28,23 @@ community_profiles <- function(x, communities, self) {
 
 #' @rdname community_profiles
 #' @importFrom stats aggregate xtabs
+#' @importFrom Matrix summary Diagonal
 #' @export
 community_profiles.default <- function(x, communities, self = TRUE) {
-  profs <- cprofile(x, self)
-  profs <- as.data.frame.table(profs)
-  levels(profs[, 2]) <- communities
-  profs[, 2] <- factor(profs[, 2], levels = sort(levels(profs[, 2])))
-  profs <- stats::aggregate(profs[[3]], by = profs[, 1:2], mean)
-  stats::xtabs(x ~ ., data = profs)
+  cite_prof <- cprofile(x, self)
+  stopifnot(length(communities) == ncol(cite_prof))
+  comm_prof <- Matrix::summary(cite_prof)
+  comm_prof$j <- communities[comm_prof$j]
+  comm_sizes <- table(communities)
+  result <- stats::xtabs(x ~ ., data = comm_prof, sparse = TRUE) %*% Diagonal(x = 1 / comm_sizes)
+  dimnames(result) <- list(cited = rownames(cite_prof), community = seq_along(comm_sizes))
+  result
 }
 
 #' @rdname community_profiles
 #' @importFrom igraph groups
 #' @export
 community_profiles.communities <- function(x, communities, self = TRUE) {
-  communities <- igraph::groups(communities)
+  communities <- igraph::membership(communities)
   NextMethod('community_profiles', communities)
 }

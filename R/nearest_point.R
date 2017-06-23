@@ -14,7 +14,7 @@
 #'
 #' @examples
 #' cites <- citations[1:6, 1:6]
-#' comms <- list(`1` = 'AoS', `2` = 'Bern', `3` = c('AmS', 'AISM', 'ANZS', 'BioJ'))
+#' comms <- setNames(c(1, 2, 3, 2, 2, 4), colnames(citations))
 #' nearest_point('AoS', cites, comms) # Inside hull (value == 0), because AoS is itself a community.
 #' nearest_point('ANZS', cites, comms) # Outside hull, near to its own community.
 #'

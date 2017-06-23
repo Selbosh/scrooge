@@ -1,11 +1,12 @@
 context("Journal profiles")
 
 cites6 <- citations[1:6, 1:6]
-lst <- list(`1` = 'AoS', `2` = 'Bern', `3` = c('AmS', 'AISM', 'ANZS', 'BioJ'))
-vec <- c(3, 3, 1, 3, 2, 3)
+memb <- setNames(c(1, 2, 3, 2, 2, 4), colnames(cites6))
+ncommunities <- length(unique(memb))
 
 ig6_multi <- igraph::graph_from_adjacency_matrix(t(cites6), weighted = NULL)
 ig6_weighted <- igraph::graph_from_adjacency_matrix(t(cites6), weighted = TRUE)
+comms <- igraph::cluster_optimal(ig6_multi)
 
 ig_multi <- igraph::graph_from_adjacency_matrix(t(citations), weighted = NULL)
 ig_weighted <- igraph::graph_from_adjacency_matrix(t(citations), weighted = TRUE)
@@ -31,47 +32,57 @@ test_that("Profiles for igraph objects are consistent", {
 context("Community profiles")
 
 test_that("Community profiles are probabilities", {
-  expect_true(all(community_profiles(cites6, lst) >= 0))
-  expect_true(all(community_profiles(cites6, lst) <= 1))
-  expect_true(all(colSums(community_profiles(cites6, lst)) == 1))
+  expect_true(all(community_profiles(cites6, memb) >= 0))
+  expect_true(all(community_profiles(cites6, memb) <= 1))
+  expect_true(all.equal(colSums(community_profiles(cites6, memb)), rep.int(1, ncommunities), check.names = FALSE))
 })
 
 test_that("Community profile dimensions are correct", {
-  expect_equal(dim(community_profiles(cites6, lst)), c(6, 3))
-  expect_equal(rownames(community_profiles(cites6, lst)), rownames(cites6))
-  expect_equal(colnames(community_profiles(cites6, lst)), names(lst))
-})
-
-test_that("Community profiles are the same for equivalent list or vector community spec", {
-  expect_equal(community_profiles(cites6, lst), community_profiles(cites6, vec))
+  expect_equal(dim(community_profiles(cites6, memb)), c(6, ncommunities))
+  expect_equal(rownames(community_profiles(cites6, memb)), rownames(cites6))
+  expect_equal(colnames(community_profiles(cites6, memb)), as.character(1:ncommunities))
 })
 
 context("Distances from journal profiles to convex hulls of community profiles")
 
 test_that("Single-journal communities lie within convex hull", {
-  expect_equal(as.vector(nearest_point('AoS', cites6, lst)$value), 0)
-  expect_equal(as.vector(nearest_point('AoS', cites6, vec)$value), 0)
-  expect_equal(as.vector(nearest_point('Bern', cites6, lst)$value), 0)
-  expect_equal(as.vector(nearest_point('Bern', cites6, vec)$value), 0)
+  expect_equal(as.vector(nearest_point('AoS', cites6, memb)$value), 0)
+  expect_equal(as.vector(nearest_point('AoS', cites6, comms)$value), 0)
+  expect_equal(as.vector(nearest_point('BioJ', cites6, memb)$value), 0)
+  expect_equal(as.vector(nearest_point('BioJ', cites6, comms)$value), 0)
 })
 
 test_that("Distances to convex hull are non-negative", {
-  expect_gte(as.vector(nearest_point('AmS', cites6, lst)$value), 0)
-  expect_gte(as.vector(nearest_point('AISM', cites6, lst)$value), 0)
-  expect_gte(as.vector(nearest_point('ANZS', cites6, lst)$value), 0)
-  expect_gte(as.vector(nearest_point('BioJ', cites6, lst)$value), 0)
+  expect_gte(as.vector(nearest_point('AmS', cites6, memb)$value),  -1e-15)
+  expect_gte(as.vector(nearest_point('AISM', cites6, memb)$value), -1e-15)
+  expect_gte(as.vector(nearest_point('ANZS', cites6, memb)$value), -1e-15)
+  expect_gte(as.vector(nearest_point('BioJ', cites6, memb)$value), -1e-15)
 })
 
 test_that("Coordinates of nearest point are a convex combination of communities", {
-  expect_equal(sum(nearest_point('AmS', cites6, lst)$solution), 1)
-  expect_equal(sum(nearest_point('AoS', cites6, lst)$solution), 1)
-  expect_true(all(nearest_point('AISM', cites6, lst)$solution > -1e-15))
-  expect_true(all(nearest_point('Bern', cites6, lst)$solution > -1e-15))
+  expect_equal(sum(nearest_point('AmS', cites6, memb)$solution), 1)
+  expect_equal(sum(nearest_point('AoS', cites6, memb)$solution), 1)
+  expect_true(all(nearest_point('AISM', cites6, memb)$solution > -1e-15))
+  expect_true(all(nearest_point('BioJ', cites6, memb)$solution > -1e-15))
 })
 
 test_that("Distances are consistent between igraph and matrix input", {
-  expect_equal(nearest_point('AmS', cites6, lst), nearest_point('AmS', ig6_multi, lst))
-  expect_equal(nearest_point('AmS', cites6, lst), nearest_point('AmS', ig6_weighted, lst))
-  expect_equal(nearest_point('AoS', cites6, lst), nearest_point('AoS', ig6_multi, lst))
-  expect_equal(nearest_point('AoS', cites6, lst), nearest_point('AoS', ig6_weighted, lst))
+  expect_equal(nearest_point('AmS', cites6, memb), nearest_point('AmS', ig6_multi, memb))
+  expect_equal(nearest_point('AmS', cites6, memb), nearest_point('AmS', ig6_weighted, memb))
+  expect_equal(nearest_point('AoS', cites6, memb), nearest_point('AoS', ig6_multi, memb))
+  expect_equal(nearest_point('AoS', cites6, memb), nearest_point('AoS', ig6_weighted, memb))
+})
+
+test_that("A singleton community's profile should equal its constituent journal profile", {
+  # AmS (community 1), AoS (community 3) and BioJ (community 4) are singletons in `memb`.
+  expect_equal(cprofile(cites6)[, 'AmS'], community_profiles(cites6, memb)[, memb['AmS']])
+  expect_equal(cprofile(cites6)[, 'AoS'], community_profiles(cites6, memb)[, memb['AoS']])
+  expect_equal(cprofile(cites6)[, 'BioJ'], community_profiles(cites6, memb)[, memb['BioJ']])
+})
+
+test_that("Citation rates within/between singleton communities are unchanged by aggregation", {
+  # As above, assuming AmS, AoS and BioJ are singletons.
+  expect_equal(cprofile(cites6)['AoS', 'AmS'], community_profiles(cites6, memb)['AoS', memb['AmS']])
+  expect_equal(cprofile(cites6)['BioJ', 'AoS'], community_profiles(cites6, memb)['BioJ', memb['AoS']])
+  expect_equal(cprofile(cites6)['AoS', 'AoS'], community_profiles(cites6, memb)['AoS', memb['AoS']])
 })
