@@ -13,10 +13,10 @@
 #' @param self logical. Include self-citations? If \code{FALSE}, they will not be counted.
 #'
 #' @examples
-#' cites <- citations[1:6, 1:6]
-#' comms <- setNames(c(1, 2, 3, 2, 2, 4), colnames(citations))
-#' nearest_point('AoS', cites, comms) # Inside hull (value == 0), because AoS is itself a community.
-#' nearest_point('ANZS', cites, comms) # Outside hull, near to its own community.
+#' counts <- citations[1:6, 1:6]
+#' comms <- setNames(c(1, 2, 3, 2, 2, 4), colnames(counts))
+#' nearest_point('AoS', counts, comms) # Inside hull (value == 0), because AoS is itself a community.
+#' nearest_point('ANZS', counts, comms) # Outside hull, near to its own community.
 #'
 #' @seealso
 #' \code{\link[quadprog]{solve.QP}}, \code{\link{community_profiles}}

@@ -25,10 +25,10 @@ The \code{citations} matrix should be arranged so that citations are directed fr
 If \code{idx} is a name, it should correspond to a row name from \code{citations}.
 }
 \examples{
-cites <- citations[1:6, 1:6]
-comms <- setNames(c(1, 2, 3, 2, 2, 4), colnames(citations))
-nearest_point('AoS', cites, comms) # Inside hull (value == 0), because AoS is itself a community.
-nearest_point('ANZS', cites, comms) # Outside hull, near to its own community.
+counts <- citations[1:6, 1:6]
+comms <- setNames(c(1, 2, 3, 2, 2, 4), colnames(counts))
+nearest_point('AoS', counts, comms) # Inside hull (value == 0), because AoS is itself a community.
+nearest_point('ANZS', counts, comms) # Outside hull, near to its own community.
 
 }
 \seealso{
