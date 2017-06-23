@@ -21,7 +21,6 @@ cprofile <- function(x, self) UseMethod('cprofile', x)
 
 #' @rdname cprofile
 #' @importFrom Matrix diag Diagonal colSums
-#' @importFrom methods as
 #' @export
 cprofile.default <- function(x, self = TRUE) {
   x <- as(x, 'dgCMatrix')
