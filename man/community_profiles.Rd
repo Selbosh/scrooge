@@ -34,7 +34,7 @@ few citations. Currently journals cannot belong to more than one community at a 
 }
 \examples{
 counts <- citations[1:6, 1:6]
-comms <- setNames(c(1, 2, 3, 2, 2, 4), colnames(citations))
+comms <- setNames(c(1, 2, 3, 2, 2, 4), colnames(counts))
 community_profiles(counts, comms)
 
 }
