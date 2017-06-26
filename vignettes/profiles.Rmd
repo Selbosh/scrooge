@@ -2,7 +2,9 @@
 title: "Journal and community profiles"
 author: "David Selby"
 date: "`r format(Sys.Date(), '%e %B %Y')`"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    df_print: kable
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
@@ -20,12 +22,12 @@ library(Matrix)
 library(scrooge)
 X <- citations[1:6, 1:6]
 diag(X) <- 0
-X
+as.data.frame.matrix(X)
 ```
 then the citation profiles, arranged side-by-side as a matrix \(\mathbf{P}\), would be
 ```{r, echo = 1}
 P <- cprofile(X)
-round(as.matrix(P), 2)
+round(as.data.frame.matrix(P), 2)
 ```
 Every column sums to one.
 ```{r}
@@ -48,7 +50,7 @@ The *community profiles* are the average of their members' journal profiles.
 In the case of communities with just one member, the community profile is the same as that journal's profile.
 ```{r, echo = 1}
 C <- community_profiles(X, comm)
-round(as.matrix(C), 2)
+round(as.data.frame.matrix(C), 2)
 ```
 Because groups 1, 3 and 4 are singletons, their profiles are equal to the journal profiles of AmS, AoS and BioJ, respectively.
 Group 2's profile is equal to the average of its member profiles, though this definition may change.
@@ -169,5 +171,75 @@ ANZS has combination vector \(\begin{pmatrix}`r paste(round(ANZS_dist$sol, 2), c
 Notice how although *Bernoulli* and ANZS are both members of community 2, it looks like *Bernoulli*---if citation profile were to be used as a measure of community similarity---might actually be a better fit for community 4, along with *Biometrical Journal*.
 Recall these journals' profiles and you see they are quite similar.
 ```{r echo = F}
-round(as.matrix(P[, c('Bern', 'BioJ')]), 2)
+round(as.data.frame.matrix(P[, c('Bern', 'BioJ')]), 2)
 ```
+
+## Practical example
+
+Consider the `scrooge` package's built-in `citations` data set.
+This was collected by Varin et al. (2016) for their paper [Statistical modelling of citation exchange between statistics journals](http://doi.org/doi:10.1111/rssa.12124), published in *JRSS-A*.
+It includes the citation counts between 47 statistics journals.
+
+```{r}
+dim(citations)
+```
+
+What communities might lie in this dataset?
+The original paper suggested hierarchical clustering of Pearson distances between symmetrised citation counts, yielding eight clusters including two singletons.
+We can recreate that result here.
+```{r, results = 'asis', echo = 1:3}
+pearson_distances <- as.dist(1 - cor(citations + t(citations), method = 'pearson'))
+dendrogram <- hclust(pearson_distances, method = 'complete')
+clustering <- cutree(dendrogram, h = 0.8)
+
+# Print an enumerated list of the clusters.
+cat(
+  paste(c('',
+        sapply(split(names(clustering), clustering),
+               function(li) paste(li, collapse = ', ')
+               )
+        ),
+      collapse = '\n1. ')
+  )
+```
+
+We can compute the convex hull of these eight clusters' community profiles.
+
+```{r, echo = 1, fig.width = 5, fig.height = 8, message = FALSE, fig.align = 'center'}
+profiles47 <- community_profiles(citations, clustering)
+
+library(tidyverse)
+theme_set(theme_minimal())
+
+profiles47 %>%
+  as.matrix %>%
+  as.data.frame.table %>%
+  ggplot(aes(x = community,
+             y = reorder(cited, order(cited, decreasing = TRUE)),
+             fill = Freq)) +
+    geom_tile() +
+    viridis::scale_fill_viridis('P', direction = -1) +
+    scale_x_discrete(position = 'bottom') +
+    ylab(NULL)
+```
+
+Hence we compute Euclidean distances from every journal profile to the convex hull of community profiles.
+
+```{r, echo = 1, fig.height = 8, fig.width = 5, fig.align = 'center'}
+hull_distances <- vapply(rownames(citations),
+                         function(j)
+                           nearest_point(j, citations, clustering)$value,
+                         FUN.VALUE = numeric(1))
+
+data_frame(journal = names(hull_distances),
+           distance = hull_distances) %>%
+  ggplot(aes(sqrt(pmax(0, distance)),
+             reorder(journal, distance))) +
+    scale_y_discrete(NULL, labels = NULL) +
+    scale_x_continuous('distance from convex hull',
+                       expand = c(0.1, 0)) +
+    geom_text(aes(label = journal))
+```
+
+Naturally, the singletons *Stata Journal* and *Journal of Statistical Software* have distance zero to the communities hull, because they are themselves communities.
+The relative distances of the other journals might be interpreted as a measure of how well they are described by the clustering structure.
