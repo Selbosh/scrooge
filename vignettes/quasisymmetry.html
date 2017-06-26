@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="David A. Selby" />
+
+
+<title>Quasi-symmetry models with the scrooge package</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Quasi-symmetry models with the <code>scrooge</code> package</h1>
+<h4 class="author"><em>David A. Selby</em></h4>
+<h4 class="date"><em>Monday 26 June 2017</em></h4>
+
+
+
+<div id="preamble" class="section level2">
+<h2>Preamble</h2>
+<p>The <code>scrooge</code> package is a collection of utilities and functions for studying bibliometrics. Install it using</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">'Selbosh/scrooge'</span>)</code></pre></div>
+<p>Then load the package:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(scrooge)</code></pre></div>
+</div>
+<div id="introduction-to-quasi-symmetry" class="section level2">
+<h2>Introduction to quasi-symmetry</h2>
+<p>A square matrix <span class="math inline">\(Q\)</span> is quasi-symmetric if it can be decomposed in the form <span class="math inline">\(Q = AS\)</span>, where <span class="math inline">\(A\)</span> is diagonal and <span class="math inline">\(S\)</span> is symmetric. The function <code>rquasisymmetric</code> generates (sparse) quasi-symmetric matrices, with the elements of <span class="math inline">\(S\)</span> independently sampled from a Poisson distribution and the elements of <span class="math inline">\(A\)</span> (or the corresponding vector of diagonal elements, <span class="math inline">\(a\)</span>) sampled from a uniform distribution.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n &lt;-<span class="st"> </span><span class="dv">100</span>
+Q &lt;-<span class="st"> </span><span class="kw">rquasisymmetric</span>(n)
+D &lt;-<span class="st"> </span>Matrix<span class="op">::</span><span class="kw">Diagonal</span>(n, Matrix<span class="op">::</span><span class="kw">colSums</span>(Q))</code></pre></div>
+<p>The symmetric and diagonal components are saved as attributes of the output.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">attr</span>(Q, <span class="st">'a'</span>)
+<span class="kw">attr</span>(Q, <span class="st">'S'</span>)
+<span class="co"># Output hidden</span></code></pre></div>
+<p>The <code>Scroogefactor</code> function computes the leading eigenvector of <code>Q / colSums(Q)</code>. It is equivalent to <code>PageRank(Q, 1) / colSums(Q)</code>. Given a quasi-symmetric matrix, this should extract the vector <code>a</code> exactly. For identifiability, the vector <code>a</code> and the output of <code>Scroogefactor</code> should each sum to one.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">SF &lt;-<span class="st"> </span><span class="kw">Scroogefactor</span>(Q)
+PR &lt;-<span class="st"> </span><span class="kw">PageRank</span>(Q, <span class="dt">alpha =</span> <span class="dv">1</span>) <span class="op">/</span><span class="st"> </span>Matrix<span class="op">::</span><span class="kw">colSums</span>(Q)
+PR &lt;-<span class="st"> </span>PR <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(PR) <span class="co"># Renormalise to sum to 1</span>
+<span class="kw">all.equal</span>(SF, PR)</code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">all.equal</span>(SF, <span class="kw">attr</span>(Q, <span class="st">'a'</span>))</code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+</div>
+<div id="the-bradleyterry-model" class="section level2">
+<h2>The Bradley–Terry model</h2>
+<p>The quasi-symmetry model is a representation of the Bradley–Terry model. The latter involves computing ‘ability weights’ of sports teams, chess players, academic journals or any other objects involved in paired comparisons. The abilities, estimated via maximum likelihood, are equivalent to the <span class="math inline">\(a\)</span> scaling vector in the quasi-symmetry model.</p>
+<p>Another (not very rigorous) way of putting it might be to say that the <span class="math inline">\(S\)</span> matrix describes the “undirected” component of the graph (say, the absolute intensity of the connections) and <span class="math inline">\(A\)</span> describes the “directed” part (the relative ranking).</p>
+</div>
+<div id="damping-factors" class="section level2">
+<h2>Damping factors</h2>
+<p>So far we have chosen the argument <code>alpha = 1</code> in the <code>PageRank</code> function. This is equivalent to an <em>undamped</em> PageRank, where the probability of a random surfer teleporting during a traversal around the graph is zero. Damping can make the PageRank calculation more stable and help deal with disconnected or non-ergodic components of the network.</p>
+<p>For <code>alpha</code> &lt; 1 in PageRank is there an equivalent adjustment that will retrieve exactly the same vector for the Bradley–Terry model?</p>
+<p>PageRank involves computing the leading eigenvector of the “Google matrix”,</p>
+<p><span class="math display">\[
+G := \alpha Q D^{-1}   + (1-\alpha) \frac1n e e^T.
+\]</span></p>
+<p>We know that the <em>Scroogefactor</em>, defined as PageRank per out-link, retrieves the vector <span class="math inline">\(a\)</span> when <span class="math inline">\(Q\)</span> is quasi-symmetric and PageRank is undamped. This can be extended to deal with damping, as follows.</p>
+<ol style="list-style-type: decimal">
+<li>Let <span class="math inline">\(Q = AS\)</span> be quasi-symmetric. Let <span class="math inline">\(D\)</span> be the diagonal matrix of column sums of <span class="math inline">\(Q\)</span>.</li>
+<li>Undamped PageRank, <span class="math inline">\(\pi_1\)</span>, is the leading (right) eigenvector of <span class="math inline">\(QD^{-1}\)</span>. Undamped Scroogefactor, <span class="math inline">\(D^{-1}\pi_1\)</span> is exactly equivalent to the diagonal component (Bradley–Terry scores) of <span class="math inline">\(Q = (Q D^{-1}) D\)</span>.</li>
+<li>Damped PageRank, <span class="math inline">\(\pi_\alpha\)</span>, is the leading eigenvector of <span class="math display">\[\alpha Q D^{-1} + (1-\alpha)\frac1n e e^T\]</span> (where <span class="math inline">\(e\)</span> is an <span class="math inline">\(n\)</span>-vector of ones), so damped Scroogefactor, <span class="math inline">\(\text{SF}_\alpha = D^{-1}\pi_\alpha\)</span>, should be equivalent to the Bradley–Terry scores of <span class="math display">\[
+Q_\alpha = \left[ \alpha Q D^{-1} + (1-\alpha)\frac1n e e^T \right] D = \alpha Q + (1-\alpha)\frac1n ee^T D.
+\]</span></li>
+</ol>
+<p>So we test this out as follows. (Recall <code>ILSR</code> computes an approximate Bradley–Terry maximum likelihood estimate.)</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">alpha &lt;-<span class="st"> </span><span class="kw">runif</span>(<span class="dv">1</span>) <span class="co"># in (0, 1)</span>
+Q_pseudo &lt;-<span class="st"> </span>alpha <span class="op">*</span><span class="st"> </span>Q <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>alpha) <span class="op">*</span><span class="st"> </span>Matrix<span class="op">::</span><span class="kw">Matrix</span>(<span class="dv">1</span>, n, n) <span class="op">%*%</span><span class="st"> </span>D <span class="op">/</span><span class="st"> </span>n
+<span class="kw">plot</span>(<span class="kw">Scroogefactor</span>(Q, alpha), <span class="kw">ILSR</span>(Q))
+<span class="kw">abline</span>(<span class="dv">0</span>, <span class="dv">1</span>)</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cor</span>(<span class="kw">Scroogefactor</span>(Q, alpha), <span class="kw">ILSR</span>(Q))</code></pre></div>
+<pre><code>## [1] 0.7731473</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(<span class="kw">Scroogefactor</span>(Q, alpha), <span class="kw">ILSR</span>(Q_pseudo))
+<span class="kw">abline</span>(<span class="dv">0</span>, <span class="dv">1</span>)</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cor</span>(<span class="kw">Scroogefactor</span>(Q, alpha), <span class="kw">ILSR</span>(Q_pseudo))</code></pre></div>
+<pre><code>## [1] 0.9999816</code></pre>
+<p>By matrix similarity, damped Scroogefactor <span class="math inline">\(D^{-1}\pi_\alpha\)</span> is equivalent to calculating the leading eigenvector of <span class="math display">\[\widetilde{G} := \alpha D^{-1} Q + (1 - \alpha) \frac1n D^{-1} ee^T D.\]</span> It is easy to see that <span class="math inline">\(G\)</span> and <span class="math inline">\(\widetilde{G}\)</span> are similar: <span class="math inline">\(\widetilde{G} = D^{-1} G D\)</span> and so <span class="math inline">\(G = D \widetilde{G} D^{-1}\)</span>.</p>
+</div>
+<div id="proving-the-relationship-between-quasi-symmetry-and-eigenvector-centrality" class="section level2">
+<h2>Proving the relationship between quasi-symmetry and eigenvector centrality</h2>
+<p>In the undamped case, it is easy to show that Scroogefactor (i.e. scaled PageRank) retrieves the true diagonal component of a quasi-symmetric matrix. We know that <span class="math inline">\(D^{-1} Q\)</span> and <span class="math inline">\(Q D^{-1}\)</span> are similar, and <span class="math inline">\(Q D^{-1}\)</span> is column-stochastic so its largest eigenvalue is 1, which means the largest eigenvalue of <span class="math inline">\(D^{-1}Q\)</span> is also 1.</p>
+<p>Here we show that the diagonal component of <span class="math inline">\(Q\)</span>, represented by the vector <span class="math inline">\(Ae = \mu\)</span> is equal to the leading eigenvector of <span class="math inline">\(D^{-1} Q\)</span>:</p>
+<p><span class="math display">\[\begin{aligned}
+D^{-1}Q \mu
+&amp;= D^{-1} A S A e \\
+&amp;= D^{-1} A (e^T A S)^T \\
+&amp;= A D^{-1} D e \\
+&amp;= Ae \\
+&amp;= \mu.
+\end{aligned}\]</span></p>
+<p>In other words, the Scroogefactor (eigenvector) retrieves <span class="math inline">\(A\)</span> exactly in the undamped quasi-symmetric case.</p>
+<p>A similar proof is clear using summation notation. A vector <span class="math inline">\(\tilde\mu\)</span> is an eigenvector of <span class="math inline">\(D^{-1}Q\)</span> with eigenvalue 1 if and only if the following equation holds: <span class="math display">\[
+\sum_{j=1}^n q_{ij} \mu_j = \tilde\mu_i \sum_{j=1}^n q_{ji} \hspace{1em}\text{for all $i$}.
+\]</span></p>
+<p>But if <span class="math inline">\(Q=DS\)</span> and we choose <span class="math inline">\(\tilde\mu_i = d_{ii}\)</span> then the left hand side is <span class="math display">\[
+\sum_{j=1}^n d_{ii} s_{ij} d_{jj} = d_{ii} \sum_{j=1}^n s_{ji} d_{jj} = \tilde\mu_i \sum_{j=1}^n q_{ji},
+\]</span> giving the right hand side, as required.</p>
+<p>What about the damped case? We want to show that the Bradley–Terry parameter vector (diagonal component) of <span class="math inline">\(\alpha Q + (1-\alpha)\frac1n ee^T D\)</span> is the leading eigenvector of <span class="math inline">\(\widetilde{G}\)</span>.</p>
+<p>However, it is not immediately clear how to write this vector down in closed form (whereas in the undamped case it was simply <span class="math inline">\(\mu:=Ae\)</span>). Is <span class="math inline">\(GD\)</span> quasi-symmetric? If so, we could simply substitute <span class="math inline">\(GD\)</span> for <span class="math inline">\(Q\)</span> in the equations above and the result would follow.</p>
+<p>In general, the sum of two quasi-symmetric matrices is not quasi-symmetric.</p>
+<p>We have <span class="math display">\[\begin{aligned}
+GD &amp;= \alpha Q + (1-\alpha)\frac1n ee^T D \\
+&amp;= \alpha Q + (1-\alpha)\frac1n ee^T \operatorname{diag}(e^TQ) \\
+&amp;= \alpha Q + (1-\alpha)\frac1n ee^T Q \\
+&amp;= \left[\alpha I + (1-\alpha)\frac1n ee^T \right] Q
+\end{aligned}\]</span></p>
+<p>where the operator in the square brackets is symmetric, doubly stochastic and diagonally dominant.</p>
+<p>Perhaps there is a more general type of matrices, not necessarily quasi-symmetric to which this relation belongs.</p>
+</div>
+<div id="symmetrizable-matrices" class="section level2">
+<h2>Symmetrizable matrices</h2>
+<p>A matrix <span class="math inline">\(Q\)</span> is symmetrizable if there exists an invertible diagonal matrix <span class="math inline">\(A\)</span> and a symmetric matrix <span class="math inline">\(S\)</span> such that <span class="math inline">\(X = AS\)</span>. Symmetrizability appears to be synonymous with quasi-symmetry. The diagonal matrix is called the symmetrizer matrix <span class="citation">(Dias, Castonguay, and Dourado 2015)</span>.</p>
+<p>A matrix <span class="math inline">\(Q\)</span> is symmetrizable if and only if, for <span class="math inline">\(k\geq 3\)</span> and any finite sequence <span class="math inline">\((i_1, i_2, \dots, i_k)\)</span> it satisfies <span class="math display">\[q_{i_1 i_2} \cdot q_{i_2 i_3} \cdot \dots \cdot q_{i_k i_1} = q_{i_2 i_1} \cdot q_{i_3 i_2} \cdot \dots \cdot q_{i_1 i_k}.
+\]</span></p>
+<p>The following algorithm, proposed in <span class="citation">Dias, Castonguay, and Dourado (2015)</span>, determines whether a matrix is symmetrizable or not and, if so, returns the diagonal matrix <span class="math inline">\(A\)</span> in <span class="math inline">\(O(n^2)\)</span> time.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">SymmetrizableMatrix &lt;-<span class="st"> </span><span class="cf">function</span>(Q) {
+  <span class="kw">stopifnot</span>(<span class="kw">length</span>(<span class="kw">dim</span>(Q)) <span class="op">==</span><span class="st"> </span><span class="dv">2</span> <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span><span class="kw">diff</span>(<span class="kw">dim</span>(Q)))
+  n &lt;-<span class="st"> </span><span class="kw">nrow</span>(Q)
+  A &lt;-<span class="st"> </span>Matrix<span class="op">::</span><span class="kw">Diagonal</span>(n, <span class="dv">0</span>)
+  TT &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span>n
+  iter &lt;-<span class="st"> </span><span class="dv">0</span>
+  <span class="cf">while</span>(<span class="kw">length</span>(TT) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) {
+    iter &lt;-<span class="st"> </span>iter <span class="op">+</span><span class="st"> </span><span class="dv">1</span>
+    <span class="cf">if</span> (iter <span class="op">&gt;</span><span class="st"> </span>n<span class="op">^</span><span class="dv">2</span>) <span class="kw">stop</span>(<span class="st">'Failed to halt'</span>)
+    i &lt;-<span class="st"> </span>TT[<span class="dv">1</span>]
+    TT &lt;-<span class="st"> </span>TT[<span class="op">-</span><span class="dv">1</span>]
+    <span class="cf">if</span> (A[i, i] <span class="op">==</span><span class="st"> </span><span class="dv">0</span>) A[i, i] &lt;-<span class="st"> </span><span class="dv">1</span>
+    <span class="cf">for</span> (j <span class="cf">in</span> TT) {
+      <span class="cf">if</span> (Q[i, j] <span class="op">*</span><span class="st"> </span>Q[j, i] <span class="op">==</span><span class="st"> </span><span class="dv">0</span>) {
+        <span class="cf">if</span> (Q[i, j] <span class="op">+</span><span class="st"> </span>Q[j, i] <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>) {
+          <span class="kw">return</span>(<span class="ot">FALSE</span>)
+        }
+      } <span class="cf">else</span> {
+        TT &lt;-<span class="st"> </span><span class="kw">c</span>(j, TT[TT <span class="op">!=</span><span class="st"> </span>j]) <span class="co"># Move j to first position of T</span>
+        <span class="cf">if</span> (A[j, j] <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>) {
+          <span class="cf">if</span> ((A[i, i] <span class="op">*</span><span class="st"> </span>Q[i, j]) <span class="op">!=</span><span class="st"> </span>(A[j, j] <span class="op">*</span><span class="st"> </span>Q[j, i])) {
+            <span class="kw">return</span>(<span class="ot">FALSE</span>)
+          }
+        } <span class="cf">else</span> A[j, j] &lt;-<span class="st"> </span>(A[i, i] <span class="op">*</span><span class="st"> </span>Q[i, j]) <span class="op">/</span><span class="st"> </span>Q[j, i]
+      }
+    }
+  }
+  <span class="kw">message</span>(<span class="st">'Matrix is symmetrizable. Returning symmetrizer matrix...'</span>)
+  <span class="kw">return</span>(A)
+}</code></pre></div>
+<p>Test:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">S &lt;-<span class="st"> </span><span class="kw">attr</span>(<span class="kw">rquasisymmetric</span>(<span class="dv">5</span>), <span class="st">'S'</span>)
+A &lt;-<span class="st"> </span><span class="kw">diag</span>(<span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dv">5</span>, <span class="ot">TRUE</span>))
+Q &lt;-<span class="st"> </span>A <span class="op">%*%</span><span class="st"> </span>S
+<span class="kw">SymmetrizableMatrix</span>(Q)</code></pre></div>
+<pre><code>## [1] FALSE</code></pre>
+<p>And the <strong>true</strong> <span class="math inline">\(A^{-1}\)</span> was:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">solve</span>(A)</code></pre></div>
+<pre><code>##           [,1] [,2] [,3]  [,4] [,5]
+## [1,] 0.1666667    0  0.0 0.000 0.00
+## [2,] 0.0000000    1  0.0 0.000 0.00
+## [3,] 0.0000000    0  0.1 0.000 0.00
+## [4,] 0.0000000    0  0.0 0.125 0.00
+## [5,] 0.0000000    0  0.0 0.000 0.25</code></pre>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2>References</h2>
+<div id="refs" class="references">
+<div id="ref-Dias2015">
+<p>Dias, Elisângela Silva, Diane Castonguay, and Mitre Costa Dourado. 2015. “Algorithms and Properties for Positive Symmetrizable Matrices.” <em>arXiv:1503.03468v1 [Cs.DM]</em>. <a href="https://arxiv.org/pdf/1503.03468v1.pdf" class="uri">https://arxiv.org/pdf/1503.03468v1.pdf</a>.</p>
+</div>
+</div>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
