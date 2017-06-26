@@ -126,3 +126,60 @@ data_frame(journal = names(hull_distances),
                        expand = c(0.1, 0)) +
     geom_text(aes(label = journal))
 
+## ---- results = 'asis', echo = 2:4, message = FALSE----------------------
+set.seed(2017)
+library(igraph)
+citations_graph <- graph_from_adjacency_matrix(citations, mode = 'plus')
+infomap <- cluster_infomap(citations_graph, nb.trials = 1000)
+
+cat(
+  paste(c('',
+        sapply(split(infomap$names, infomap$membership),
+               function(li) paste(li, collapse = ', ')
+               )
+        ),
+      collapse = '\n1. ')
+  )
+
+## ---- echo = 1, fig.width = 5, fig.height = 8, fig.align = 'center'------
+infomap_distances <- vapply(rownames(citations),
+                            function(j)
+                            nearest_point(j, citations, infomap)$value,
+                            FUN.VALUE = numeric(1))
+
+data_frame(journal = names(infomap_distances),
+           distance = infomap_distances) %>%
+  ggplot(aes(sqrt(pmax(0, distance)),
+             reorder(journal, distance))) +
+    scale_y_discrete(NULL, labels = NULL) +
+    scale_x_continuous('distance from convex hull',
+                       expand = c(0.1, 0)) +
+    geom_text(aes(label = journal))
+
+## ----echo = 1, results = 'asis'------------------------------------------
+louvain <- cluster_louvain(citations_graph)
+
+cat(
+  paste(c('',
+        sapply(split(louvain$names, louvain$membership),
+               function(li) paste(li, collapse = ', ')
+               )
+        ),
+      collapse = '\n1. ')
+  )
+
+## ---- echo = 1, fig.width = 5, fig.height = 8, fig.align = 'center'------
+louvain_distances <- vapply(rownames(citations),
+                            function(j)
+                            nearest_point(j, citations, louvain)$value,
+                            FUN.VALUE = numeric(1))
+
+data_frame(journal = names(louvain_distances),
+           distance = louvain_distances) %>%
+  ggplot(aes(sqrt(pmax(0, distance)),
+             reorder(journal, distance))) +
+    scale_y_discrete(NULL, labels = NULL) +
+    scale_x_continuous('distance from convex hull',
+                       expand = c(0.1, 0)) +
+    geom_text(aes(label = journal))
+

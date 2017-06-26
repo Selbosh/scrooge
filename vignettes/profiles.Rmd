@@ -203,7 +203,7 @@ cat(
   )
 ```
 
-We can compute the convex hull of these eight clusters' community profiles.
+We can compute these eight clusters' community profiles.
 
 ```{r, echo = 1, fig.width = 5, fig.height = 8, message = FALSE, fig.align = 'center'}
 profiles47 <- community_profiles(citations, clustering)
@@ -223,7 +223,7 @@ profiles47 %>%
     ylab(NULL)
 ```
 
-Hence we compute Euclidean distances from every journal profile to the convex hull of community profiles.
+Hence we compute Euclidean distances from every journal profile to the convex hull of the community profiles.
 
 ```{r, echo = 1, fig.height = 8, fig.width = 5, fig.align = 'center'}
 hull_distances <- vapply(rownames(citations),
@@ -243,3 +243,82 @@ data_frame(journal = names(hull_distances),
 
 Naturally, the singletons *Stata Journal* and *Journal of Statistical Software* have distance zero to the communities hull, because they are themselves communities.
 The relative distances of the other journals might be interpreted as a measure of how well they are described by the clustering structure.
+Higher distances imply journals less well-represented by community profiles.
+
+The sum of squared distances is **`r signif(sum(hull_distances), 4)`** units^2^.
+On its own, this doesn't really tell us much about the quality of our clustering.
+
+For comparison, we can try a couple of other clustering algorithms.
+The Infomap algorithm ([Rosvall & Bergstrom 2008](http://doi.org/doi:10.1073/pnas.0706851105)) is implemented in the R package `igraph`.
+
+```{r, results = 'asis', echo = 2:4, message = FALSE}
+set.seed(2017)
+library(igraph)
+citations_graph <- graph_from_adjacency_matrix(citations, mode = 'plus')
+infomap <- cluster_infomap(citations_graph, nb.trials = 1000)
+
+cat(
+  paste(c('',
+        sapply(split(infomap$names, infomap$membership),
+               function(li) paste(li, collapse = ', ')
+               )
+        ),
+      collapse = '\n1. ')
+  )
+```
+
+How does the resulting clustering compare with our hierarchical structure from earlier?
+
+```{r, echo = 1, fig.width = 5, fig.height = 8, fig.align = 'center'}
+infomap_distances <- vapply(rownames(citations),
+                            function(j)
+                            nearest_point(j, citations, infomap)$value,
+                            FUN.VALUE = numeric(1))
+
+data_frame(journal = names(infomap_distances),
+           distance = infomap_distances) %>%
+  ggplot(aes(sqrt(pmax(0, distance)),
+             reorder(journal, distance))) +
+    scale_y_discrete(NULL, labels = NULL) +
+    scale_x_continuous('distance from convex hull',
+                       expand = c(0.1, 0)) +
+    geom_text(aes(label = journal))
+```
+
+The sum of squared distances is **`r signif(sum(infomap_distances), 4)`** units^2^, this time.
+However, the Infomap algorithm is nondeterministic and occasionally unstable, so you might obtain a different clustering and distance score every time you run it!
+
+Try now the Louvain algorithm ([Blondel et al. 2008](http://doi.org/10.1088/1742-5468/2008/10/P10008)).
+
+```{r echo = 1, results = 'asis'}
+louvain <- cluster_louvain(citations_graph)
+
+cat(
+  paste(c('',
+        sapply(split(louvain$names, louvain$membership),
+               function(li) paste(li, collapse = ', ')
+               )
+        ),
+      collapse = '\n1. ')
+  )
+```
+
+We get the following results.
+
+```{r, echo = 1, fig.width = 5, fig.height = 8, fig.align = 'center'}
+louvain_distances <- vapply(rownames(citations),
+                            function(j)
+                            nearest_point(j, citations, louvain)$value,
+                            FUN.VALUE = numeric(1))
+
+data_frame(journal = names(louvain_distances),
+           distance = louvain_distances) %>%
+  ggplot(aes(sqrt(pmax(0, distance)),
+             reorder(journal, distance))) +
+    scale_y_discrete(NULL, labels = NULL) +
+    scale_x_continuous('distance from convex hull',
+                       expand = c(0.1, 0)) +
+    geom_text(aes(label = journal))
+```
+
+The sum of squared distances is **`r signif(sum(louvain_distances), 4)`** units^2^.
