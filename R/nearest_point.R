@@ -24,10 +24,10 @@
 #' @importFrom quadprog solve.QP
 #' @export
 nearest_point <- function(idx, citations, communities, self = TRUE) {
-  stopifnot(length(idx) == 1)
-  P <- cprofile(citations, self = self)
-  C <- community_profiles(citations, communities)
+  stopifnot(length(idx) == 1) # May vectorise later
+  C <- community_profile(citations, communities, self = self)
   g <- ncol(C) # number of communities
+  P <- cprofile(citations, self = self)
 
   D <- t(C) %*% C
   d <- P[, idx] %*% C

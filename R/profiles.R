@@ -31,7 +31,7 @@ cprofile.default <- function(x, self = TRUE) {
 }
 
 #' @rdname cprofile
-#' @importFrom igraph as_adjacency_matrix is.weighted
+#' @importFrom igraph as_adjacency_matrix is.weighted V
 #' @importFrom Matrix t diag
 #' @export
 cprofile.igraph <- function(x, self = TRUE) {
@@ -41,4 +41,29 @@ cprofile.igraph <- function(x, self = TRUE) {
   x <- t(x)
   if (!self) diag(x) <- 0
   NextMethod('cprofile', x)
+}
+
+#' Calculate community profiles
+#'
+#' Given a directed network and a mapping of nodes to communities, calculate the \emph{community profiles}
+#' --- the vector of probabilities that a node from one community cites other nodes in the network.
+#'
+#' Profiles are computed by aggregating the out-links of nodes in each community, then scaling to sum
+#' to one. This means nodes with more out-links have greater influence on their community profiles.
+#'
+#' @param network A matrix of citation counts (from columns to rows) or an \code{\link[igraph]{igraph}} object.
+#' @param \dots Further arguments passed to \code{\link{merge_communities}}.
+#' @param self logical. Include self-citations? If \code{FALSE}, they will not be counted.
+#'
+#' @seealso
+#' \code{\link{merge_communities}}, \code{\link{cprofile}}
+#'
+#' @return
+#' A sparse matrix of community profiles.
+#' Each column corresponds to a community and each row to a node in the network.
+#'
+#' @export
+community_profile <- function(network, ..., self = TRUE) {
+  merged <- merge_communities(network, ...)
+  cprofile(merged, self = self)
 }

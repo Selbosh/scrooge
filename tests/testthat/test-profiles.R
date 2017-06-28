@@ -32,15 +32,14 @@ test_that("Profiles for igraph objects are consistent", {
 context("Community profiles")
 
 test_that("Community profiles are probabilities", {
-  expect_true(all(community_profiles(cites6, memb) >= 0))
-  expect_true(all(community_profiles(cites6, memb) <= 1))
-  expect_true(all.equal(colSums(community_profiles(cites6, memb)), rep.int(1, ncommunities), check.names = FALSE))
+  expect_true(all(community_profile(cites6, memb) >= 0))
+  expect_true(all(community_profile(cites6, memb) <= 1))
+  expect_true(all.equal(colSums(community_profile(cites6, memb)), rep.int(1, ncommunities), check.names = FALSE))
 })
 
 test_that("Community profile dimensions are correct", {
-  expect_equal(dim(community_profiles(cites6, memb)), c(6, ncommunities))
-  expect_equal(rownames(community_profiles(cites6, memb)), rownames(cites6))
-  expect_equal(colnames(community_profiles(cites6, memb)), as.character(1:ncommunities))
+  expect_equal(dim(community_profile(cites6, memb)), c(6, ncommunities))
+  expect_equal(rownames(community_profile(cites6, memb)), rownames(cites6))
 })
 
 context("Distances from journal profiles to convex hulls of community profiles")
@@ -75,14 +74,14 @@ test_that("Distances are consistent between igraph and matrix input", {
 
 test_that("A singleton community's profile should equal its constituent journal profile", {
   # AmS (community 1), AoS (community 3) and BioJ (community 4) are singletons in `memb`.
-  expect_equal(cprofile(cites6)[, 'AmS'], community_profiles(cites6, memb)[, memb['AmS']])
-  expect_equal(cprofile(cites6)[, 'AoS'], community_profiles(cites6, memb)[, memb['AoS']])
-  expect_equal(cprofile(cites6)[, 'BioJ'], community_profiles(cites6, memb)[, memb['BioJ']])
+  expect_equal(cprofile(cites6)[, 'AmS'], community_profile(cites6, memb)[, memb['AmS']])
+  expect_equal(cprofile(cites6)[, 'AoS'], community_profile(cites6, memb)[, memb['AoS']])
+  expect_equal(cprofile(cites6)[, 'BioJ'], community_profile(cites6, memb)[, memb['BioJ']])
 })
 
 test_that("Citation rates within/between singleton communities are unchanged by aggregation", {
   # As above, assuming AmS, AoS and BioJ are singletons.
-  expect_equal(cprofile(cites6)['AoS', 'AmS'], community_profiles(cites6, memb)['AoS', memb['AmS']])
-  expect_equal(cprofile(cites6)['BioJ', 'AoS'], community_profiles(cites6, memb)['BioJ', memb['AoS']])
-  expect_equal(cprofile(cites6)['AoS', 'AoS'], community_profiles(cites6, memb)['AoS', memb['AoS']])
+  expect_equivalent(cprofile(cites6)['AoS', 'AmS'], community_profile(cites6, memb)['AoS', memb['AmS']])
+  expect_equivalent(cprofile(cites6)['BioJ', 'AoS'], community_profile(cites6, memb)['BioJ', memb['AoS']])
+  expect_equivalent(cprofile(cites6)['AoS', 'AoS'], community_profile(cites6, memb)['AoS', memb['AoS']])
 })
