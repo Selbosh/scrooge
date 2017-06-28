@@ -49,7 +49,7 @@ comm <- c(AmS  = 1,
 The *community profiles* are the average of their members' journal profiles.
 In the case of communities with just one member, the community profile is the same as that journal's profile.
 ```{r, echo = 1}
-C <- community_profiles(X, comm)
+C <- community_profile(X, comm)
 round(as.data.frame.matrix(C), 2)
 ```
 Because groups 1, 3 and 4 are singletons, their profiles are equal to the journal profiles of AmS, AoS and BioJ, respectively.
@@ -206,20 +206,19 @@ cat(
 We can compute these eight clusters' community profiles.
 
 ```{r, echo = 1, fig.width = 5, fig.height = 8, message = FALSE, fig.align = 'center'}
-profiles47 <- community_profiles(citations, clustering)
+profiles47 <- community_profile(citations, clustering)
 
 library(tidyverse)
 theme_set(theme_minimal())
 
 profiles47 %>%
-  as.matrix %>%
-  as.data.frame.table %>%
-  ggplot(aes(x = community,
-             y = reorder(cited, order(cited, decreasing = TRUE)),
-             fill = Freq)) +
+  Matrix::summary() %>%
+  ggplot(aes(x = as.factor(j),
+             y = rownames(profiles47)[i],
+             fill = x)) +
     geom_tile() +
     viridis::scale_fill_viridis('P', direction = -1) +
-    scale_x_discrete(position = 'bottom') +
+    scale_x_discrete('community', position = 'bottom') +
     ylab(NULL)
 ```
 
