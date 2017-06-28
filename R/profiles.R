@@ -10,7 +10,7 @@
 #' A matrix of journal citation profiles.
 #'
 #' @seealso
-#' \code{\link{community_profiles}}
+#' \code{\link{community_profile}}
 #'
 #' @examples
 #' cprofile(citations)

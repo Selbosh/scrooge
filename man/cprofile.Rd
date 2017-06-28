@@ -30,5 +30,5 @@ cprofile(citations, self = FALSE)
 
 }
 \seealso{
-\code{\link{community_profiles}}
+\code{\link{community_profile}}
 }
