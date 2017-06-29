@@ -32,5 +32,5 @@ nearest_point('ANZS', counts, comms) # Outside hull, near to its own community.
 
 }
 \seealso{
-\code{\link[quadprog]{solve.QP}}, \code{\link{community_profiles}}
+\code{\link[quadprog]{solve.QP}}, \code{\link{community_profile}}
 }
