@@ -11,7 +11,7 @@ nearest_point(idx, citations, communities, self = TRUE)
 
 \item{citations}{A square contingency table of citation data.}
 
-\item{communities}{A membership vector or igraph \code{communities} object.}
+\item{communities}{A membership vector or \link[igraph:communities]{igraph::communities} object.}
 
 \item{self}{logical. Include self-citations? If \code{FALSE}, they will not be counted.}
 }
@@ -32,5 +32,5 @@ nearest_point('ANZS', counts, comms) # Outside hull, near to its own community.
 
 }
 \seealso{
-\code{\link[quadprog]{solve.QP}}, \code{\link{community_profile}}
+\code{\link[quadprog:solve.QP]{quadprog::solve.QP()}}, \code{\link[=community_profile]{community_profile()}}
 }

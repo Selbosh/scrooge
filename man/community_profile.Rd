@@ -7,9 +7,9 @@
 community_profile(network, ..., self = TRUE)
 }
 \arguments{
-\item{network}{A matrix of citation counts (from columns to rows) or an \code{\link[igraph]{igraph}} object.}
+\item{network}{A matrix of citation counts (from columns to rows) or an \link[igraph:igraph]{igraph} object.}
 
-\item{\dots}{Further arguments passed to \code{\link{merge_communities}}.}
+\item{\dots}{Further arguments passed to \code{\link[=merge_communities]{merge_communities()}}.}
 
 \item{self}{logical. Include self-citations? If \code{FALSE}, they will not be counted.}
 }
@@ -26,5 +26,5 @@ Profiles are computed by aggregating the out-links of nodes in each community, t
 to one. This means nodes with more out-links have greater influence on their community profiles.
 }
 \seealso{
-\code{\link{merge_communities}}, \code{\link{cprofile}}
+\code{\link[=merge_communities]{merge_communities()}}, \code{\link[=cprofile]{cprofile()}}
 }

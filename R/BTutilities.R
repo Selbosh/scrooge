@@ -38,12 +38,12 @@ vcovBT <- function(mu, X) {
 
 #' Add pseudocounts to a paired comparison matrix
 #'
-#' Allows fitting \code{\link{BradleyTerry}} models with parameters equal to damped \code{\link{Scroogefactor}}s.
+#' Allows fitting [BradleyTerry()] models with parameters equal to damped [Scroogefactor()]s.
 #'
 #' Eigenvector estimators can be used to compute Bradley--Terry scores.
-#' But a \emph{damped} PageRank uses a modified probability transition matrix dependent on a parameter, \code{alpha}.
+#' But a *damped* PageRank uses a modified probability transition matrix dependent on a parameter, `alpha`.
 #'
-#' @seealso \code{\link{BradleyTerry}}
+#' @seealso [BradleyTerry()]
 #' @family Bradley-Terry model utility functions
 #'
 #' @examples
@@ -55,7 +55,7 @@ vcovBT <- function(mu, X) {
 #' @param X a square matrix of paired comparison data
 #' @param alpha a damping factor between 0 and 1
 #'
-#' @return a matrix in the same form as \code{X}, with pseudocounts added
+#' @return a matrix in the same form as `X`, with pseudocounts added
 #'
 #' @export
 pseudocount <- function(X, alpha = 0.85) {

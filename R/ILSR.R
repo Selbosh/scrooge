@@ -1,16 +1,16 @@
 #' Estimate the parameters of a Bradley-Terry model
 #'
 #' Estimate Bradley-Terry ability scores from paired comparison data using the I-LSR algorithm.
-#' Avoids using \code{glm} and seems to be faster, but only approximates maximum likelihood.
+#' Avoids using [stats::glm()] and seems to be faster, but only approximates maximum likelihood.
 #'
 #' The function uses iterative Luce Spectral Ranking (I-LSR) to approximate the maximum likelihood ability weights of the Bradley-Terry model.
-#' \emph{To do:} Add unit tests.
+#' *To do:* Add unit tests.
 #'
 #' @param C a square matrix of paired comparisons
 #' @param maxits The maximum number of iterations in the I-LSR algorithm
 #' @param tolerance The criterion for convergence of the algorithm
-#' @param sort logical. If \code{TRUE}, sort the weights in descending order
-#' @param verbose logical. If \code{TRUE}, show the number of iterations as a message
+#' @param sort logical. If `TRUE`, sort the weights in descending order
+#' @param verbose logical. If `TRUE`, show the number of iterations as a message
 #'
 #' @return A vector of estimated ability scores
 #'
@@ -22,7 +22,7 @@
 #' @references
 #' Maystre, Lucas and Grossglauser, Matthias (2015).
 #' Fast and accurate inference of Plackett--Luce models.
-#' In \emph{Advances in Neural Information Processing Systems},
+#' In *Advances in Neural Information Processing Systems*,
 #' 172--180.
 #'
 #' @importFrom utils tail

@@ -16,13 +16,13 @@ A square matrix of citation counts between 47 academic journals in the field of 
 }
 \details{
 Citations point from the column journal (\code{citing}) to the row journal (\code{cited}).
- The \emph{article counts} (that is, the total number of publications from that journal in 2010) are available via \code{articles}.
+The \emph{article counts} (that is, the total number of publications from that journal in 2010) are available via \code{articles}.
 }
 \references{
 Varin, C., Cattelan, M., & Firth, D. (2016).
 Statistical modelling of citation exchange between statistics journals.
 \emph{Journal of the Royal Statistical Society: Series A (Statistics in Society)},
-\bold{179(1)}, 1--63.
+\strong{179(1)}, 1--63.
 }
 \seealso{
 \code{\link[BradleyTerry2]{citations}}, a similar, smaller dataset in \code{BradleyTerry2}

@@ -24,3 +24,4 @@ Suggests:
     tidyverse,
     viridis
 VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)

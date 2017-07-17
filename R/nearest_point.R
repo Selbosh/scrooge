@@ -4,13 +4,13 @@
 #' in the convex hull of community profiles that is nearest to a given journal profile.
 #'
 #' This function uses quadratic programming to calculate the closest point by Euclidean distance.
-#' The \code{citations} matrix should be arranged so that citations are directed from columns to rows.
-#' If \code{idx} is a name, it should correspond to a row name from \code{citations}.
+#' The `citations` matrix should be arranged so that citations are directed from columns to rows.
+#' If `idx` is a name, it should correspond to a row name from `citations`.
 #'
 #' @param idx A journal name or index.
 #' @param citations A square contingency table of citation data.
-#' @param communities A membership vector or igraph \code{communities} object.
-#' @param self logical. Include self-citations? If \code{FALSE}, they will not be counted.
+#' @param communities A membership vector or [igraph::communities] object.
+#' @param self logical. Include self-citations? If `FALSE`, they will not be counted.
 #'
 #' @examples
 #' counts <- citations[1:6, 1:6]
@@ -19,7 +19,7 @@
 #' nearest_point('ANZS', counts, comms) # Outside hull, near to its own community.
 #'
 #' @seealso
-#' \code{\link[quadprog]{solve.QP}}, \code{\link{community_profile}}
+#' [quadprog::solve.QP()], [community_profile()]
 #'
 #' @importFrom quadprog solve.QP
 #' @export

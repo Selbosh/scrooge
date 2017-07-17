@@ -18,7 +18,7 @@ A PageRank vector, scaled to sum to one
 }
 \description{
 Given a (weighted) adjacency matrix, compute the PageRank: the
-  the stationary distribution of a random walk around the graph.
+the stationary distribution of a random walk around the graph.
 }
 \details{
 PageRank is an eigenvector centrality metric, equivalent to Pinski & Narin's \emph{influence weight} (1976)

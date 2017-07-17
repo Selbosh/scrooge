@@ -13,7 +13,7 @@ cprofile(x, self)
 \method{cprofile}{igraph}(x, self = TRUE)
 }
 \arguments{
-\item{x}{a matrix of citations (from columns to rows) or an \code{igraph} object}
+\item{x}{a matrix of citations (from columns to rows) or an \link[igraph:igraph]{igraph} object}
 
 \item{self}{logical. Include self-citations? If \code{FALSE}, they will not be counted.}
 }
@@ -30,5 +30,5 @@ cprofile(citations, self = FALSE)
 
 }
 \seealso{
-\code{\link{community_profile}}
+\code{\link[=community_profile]{community_profile()}}
 }

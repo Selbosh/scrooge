@@ -3,14 +3,14 @@
 #' For a directed network, calculate the outgoing transition probabilities of a random walker at each node.
 #' This is equivalent to the proportion of citations each journal allocates to each other journal.
 #'
-#' @param x a matrix of citations (from columns to rows) or an \code{igraph} object
-#' @param self logical. Include self-citations? If \code{FALSE}, they will not be counted.
+#' @param x a matrix of citations (from columns to rows) or an [igraph][igraph::igraph] object
+#' @param self logical. Include self-citations? If `FALSE`, they will not be counted.
 #'
 #' @return
 #' A matrix of journal citation profiles.
 #'
 #' @seealso
-#' \code{\link{community_profile}}
+#' [community_profile()]
 #'
 #' @examples
 #' cprofile(citations)
@@ -45,18 +45,18 @@ cprofile.igraph <- function(x, self = TRUE) {
 
 #' Calculate community profiles
 #'
-#' Given a directed network and a mapping of nodes to communities, calculate the \emph{community profiles}
+#' Given a directed network and a mapping of nodes to communities, calculate the *community profiles*
 #' --- the vector of probabilities that a node from one community cites other nodes in the network.
 #'
 #' Profiles are computed by aggregating the out-links of nodes in each community, then scaling to sum
 #' to one. This means nodes with more out-links have greater influence on their community profiles.
 #'
-#' @param network A matrix of citation counts (from columns to rows) or an \code{\link[igraph]{igraph}} object.
-#' @param \dots Further arguments passed to \code{\link{merge_communities}}.
-#' @param self logical. Include self-citations? If \code{FALSE}, they will not be counted.
+#' @param network A matrix of citation counts (from columns to rows) or an [igraph][igraph::igraph] object.
+#' @param \dots Further arguments passed to [merge_communities()].
+#' @param self logical. Include self-citations? If `FALSE`, they will not be counted.
 #'
 #' @seealso
-#' \code{\link{merge_communities}}, \code{\link{cprofile}}
+#' [merge_communities()], [cprofile()]
 #'
 #' @return
 #' A sparse matrix of community profiles.

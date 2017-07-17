@@ -20,7 +20,7 @@ Sample a fixed number of balls, without replacement, from multiple urns.
 \details{
 Requesting a non-integer or negative number of balls, or more than are available in all the urns, will throw an error.
 If \code{k} is a vector of length > 1, only the first element will be used.
-Specifying only one or two urns will respectively return \code{k} or call \code{\link{rhyper}} and issue a warning.
+Specifying only one or two urns will respectively return \code{k} or call \code{\link[stats:rhyper]{stats::rhyper()}} and issue a warning.
 
 If \eqn{k = \sum n} then the function should return \code{n}.
 }
@@ -36,5 +36,5 @@ rmultihyper(citations, k)
 \url{http://stats.stackexchange.com/questions/199948/random-generation-from-multivariate-hypergeometric-distribution}
 }
 \seealso{
-\code{\link{rhyper}} for sampling two different colours of balls from a single urn (equivalent to sampling one colour from two urns)
+\code{\link[stats:rhyper]{stats::rhyper()}} for sampling two different colours of balls from a single urn (equivalent to sampling one colour from two urns)
 }

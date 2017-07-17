@@ -3,15 +3,15 @@
 #' Fits Bradley--Terry model, also known as a quasi-symmetry model,
 #' to paired comparison data via maximum (quasi) likelihood estimation.
 #'
-#' This implementation avoids calling \code{\link[BradleyTerry2]{BTm}} and
+#' This implementation avoids calling [BradleyTerry2::BTm()] and
 #' instead fits the \code{\link[stats]{glm}} directly.
 #' By default, the model is fitted by quasi-likelihood (allowing non-integer counts) with a logit link.
-#' To fit by maximum likelihood instead, set the \code{\link[stats]{family}} argument to \code{binomial}.
+#' To fit by maximum likelihood instead, set the \code{\link[stats]{family}} argument to `binomial`.
 #'
 #' @param C a square matrix of paired comparisons
 #' @param family a description of the error distribution and link function to be used. See \code{\link[stats]{family}}
 #'
-#' @return An object of class \code{"glm"}
+#' @return An object of class `"glm"`
 #'
 #' @family network centrality estimators
 #' @family Bradley-Terry model utility functions
@@ -45,9 +45,9 @@ BradleyTerry <- function(C, family = stats::quasibinomial) {
 
 #' Estimate the parameters of a Bradley--Terry model
 #'
-#' A quick way to retrieve Bradley--Terry parameter estimates without saving the \code{glm} object.
+#' A quick way to retrieve Bradley--Terry parameter estimates without saving the `glm` object.
 #'
-#' For a model summary and standard errors, use \code{\link{BradleyTerry}}
+#' For a model summary and standard errors, use [BradleyTerry()].
 #'
 #' @param X a matrix of paired comparison data
 #' @param sort logical.
@@ -71,12 +71,12 @@ BTscores <- function(X, sort = FALSE) {
 #' Estimate the parameters of a Bradley--Terry model
 #'
 #' A one-liner to fit and extract model parameters from a \code{\link[BradleyTerry2]{BTm}} model
-#' Deprecated: use \code{\link{BradleyTerry}} or \code{\link{BTscores}} instead.
+#' Deprecated: use [BradleyTerry()] or [BTscores()] instead.
 #'
 #' Previously a placeholder function, now remains for reference and comparison purposes.
 #'
 #' @param C a square matrix of paired comparison data
-#' @param sort logical. If \code{TRUE}, sort the weights in descending order
+#' @param sort logical. If `TRUE`, sort the weights in descending order
 #'
 #' @seealso BradleyTerry BTscores
 #'
@@ -92,13 +92,13 @@ BTscores <- function(X, sort = FALSE) {
 #'
 #' @references
 #' Heather Turner, David Firth (2012).
-#' Bradley--Terry Models in R: The \code{BradleyTerry2} Package.
-#' \emph{Journal of Statistical Software},
+#' Bradley--Terry Models in R: The `BradleyTerry2` Package.
+#' *Journal of Statistical Software*,
 #' 48(9), 1--21.
 #'
 #' Bradley, R. A., & Terry, M. E. (1952).
 #' Rank analysis of incomplete block designs: I. The method of paired comparisons.
-#' \emph{Biometrika},
+#' *Biometrika*,
 #' 39(3/4), 324--345.
 #'
 #' @export

@@ -13,7 +13,7 @@ BT2(C, sort = FALSE)
 }
 \description{
 A one-liner to fit and extract model parameters from a \code{\link[BradleyTerry2]{BTm}} model
-Deprecated: use \code{\link{BradleyTerry}} or \code{\link{BTscores}} instead.
+Deprecated: use \code{\link[=BradleyTerry]{BradleyTerry()}} or \code{\link[=BTscores]{BTscores()}} instead.
 }
 \details{
 Previously a placeholder function, now remains for reference and comparison purposes.

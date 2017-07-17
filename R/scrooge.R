@@ -5,10 +5,10 @@
 #'   of different utilities that might come in useful.
 #'
 #' @details
-#' The package includes \code{\link{verify}}, which is a handy binary operator
-#'   for checking simulation results, \code{\link{PageRank}}, a (fairly fragile!)
-#'   way of calculating PageRanks, and \code{\link{ILSR}}, an estimator for
-#'   the Bradley--Terry model. The function \code{\link{vcovBT}} will compute asymptotic
+#' The package includes [verify()], which is a handy binary operator
+#'   for checking simulation results, [PageRank()], a (fairly fragile!)
+#'   way of calculating PageRanks, and [ILSR()], an estimator for
+#'   the Bradley--Terry model. The function [vcovBT()] will compute asymptotic
 #'   variance-covariance matrices for the Bradley--Terry model.
 #'
 #' @name scrooge

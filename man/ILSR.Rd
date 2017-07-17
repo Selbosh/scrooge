@@ -22,7 +22,7 @@ A vector of estimated ability scores
 }
 \description{
 Estimate Bradley-Terry ability scores from paired comparison data using the I-LSR algorithm.
-Avoids using \code{glm} and seems to be faster, but only approximates maximum likelihood.
+Avoids using \code{\link[stats:glm]{stats::glm()}} and seems to be faster, but only approximates maximum likelihood.
 }
 \details{
 The function uses iterative Luce Spectral Ranking (I-LSR) to approximate the maximum likelihood ability weights of the Bradley-Terry model.

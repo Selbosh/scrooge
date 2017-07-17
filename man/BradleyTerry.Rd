@@ -19,7 +19,7 @@ Fits Bradley--Terry model, also known as a quasi-symmetry model,
 to paired comparison data via maximum (quasi) likelihood estimation.
 }
 \details{
-This implementation avoids calling \code{\link[BradleyTerry2]{BTm}} and
+This implementation avoids calling \code{\link[BradleyTerry2:BTm]{BradleyTerry2::BTm()}} and
 instead fits the \code{\link[stats]{glm}} directly.
 By default, the model is fitted by quasi-likelihood (allowing non-integer counts) with a logit link.
 To fit by maximum likelihood instead, set the \code{\link[stats]{family}} argument to \code{binomial}.

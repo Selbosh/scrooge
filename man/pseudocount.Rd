@@ -15,7 +15,7 @@ pseudocount(X, alpha = 0.85)
 a matrix in the same form as \code{X}, with pseudocounts added
 }
 \description{
-Allows fitting \code{\link{BradleyTerry}} models with parameters equal to damped \code{\link{Scroogefactor}}s.
+Allows fitting \code{\link[=BradleyTerry]{BradleyTerry()}} models with parameters equal to damped \code{\link[=Scroogefactor]{Scroogefactor()}}s.
 }
 \details{
 Eigenvector estimators can be used to compute Bradley--Terry scores.
@@ -29,7 +29,7 @@ plot(SF, BT_pseudo); abline(0, 1)
 
 }
 \seealso{
-\code{\link{BradleyTerry}}
+\code{\link[=BradleyTerry]{BradleyTerry()}}
 
 Other Bradley-Terry model utility functions: \code{\link{BradleyTerry}},
   \code{\link{hessianBT}}, \code{\link{loglikelihood}},

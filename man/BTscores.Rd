@@ -15,7 +15,7 @@ BTscores(X, sort = FALSE)
 A quick way to retrieve Bradley--Terry parameter estimates without saving the \code{glm} object.
 }
 \details{
-For a model summary and standard errors, use \code{\link{BradleyTerry}}
+For a model summary and standard errors, use \code{\link[=BradleyTerry]{BradleyTerry()}}.
 }
 \examples{
 BTscores(citations)

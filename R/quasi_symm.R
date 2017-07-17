@@ -8,7 +8,7 @@
 #' @importFrom Matrix rsparsematrix drop0
 #' @importFrom stats rnorm runif setNames
 #'
-#' @return A sparse, quasi-symmetric matrix of dimension \code{n} by \code{n}.
+#' @return A sparse, quasi-symmetric matrix of dimension `n` by `n`.
 #'
 #' @export
 #'
