@@ -28,9 +28,9 @@ so make sure to wrap \code{a} and \code{b} in brackets where appropriate.
 Use \code{verify(a, b)} for a conventional prefix operator.
 }
 \examples{
-0.3333333 \%=\% (1/3)
+0.3333333333333333 \%=\% (1/3)
 verify(pi, 3.14159)
-(1:5 + 1e-6) \%=\% 1:5
+(1:5 + 1e-15) \%=\% 1:5
 mean(rnorm(1e6, sd = 1e-3)) \%=\% 0
 
 }

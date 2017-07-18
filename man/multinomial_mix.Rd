@@ -9,7 +9,7 @@ multinomial_mix(target, profiles)
 \arguments{
 \item{target}{A vector of citations to be compared}
 
-\item{profiles}{A matrix of \code{\link[=community profiles]{community profiles()}}}
+\item{profiles}{A matrix of \code{\link[=community_profile]{community_profile()}}s}
 }
 \value{
 A vector of log-probabilities that each community generated \code{target}'s citation profile.

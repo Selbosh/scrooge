@@ -63,7 +63,7 @@ nearest_point <- function(idx, citations, communities, self = TRUE) {
 #' This is also true for any convex combination (finite mixture distribution) of citation profiles.
 #'
 #' Geometrically, this represents a point on part of the surface of the unit \eqn{n-1}-sphere
-#'   that is within the positive [closed orthant][https://en.wikipedia.org/wiki/Orthant]
+#'   that is within the positive \href{https://en.wikipedia.org/wiki/Orthant}{closed orthant}
 #'   in \eqn{\mathbb{R}^n}{R^n}.
 #' In a 3-journal network, this corresponds to the eighth of the unit sphere in the first octant and
 #'   in a 2-journal network, the quarter of the unit circle in the first quadrant.
@@ -96,7 +96,7 @@ nearest_cosine <- nearest_point
 #' @seealso [nearest_point()]
 #'
 #' @param target A vector of citations to be compared
-#' @param profiles A matrix of [community profiles()]
+#' @param profiles A matrix of [community_profile()]s
 #'
 #' @return
 #' A vector of log-probabilities that each community generated `target`'s citation profile.

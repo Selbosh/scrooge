@@ -72,6 +72,24 @@ test_that("Distances are consistent between igraph and matrix input", {
   expect_equal(nearest_point('AoS', cites6, memb), nearest_point('AoS', ig6_weighted, memb))
 })
 
+test_that("'value' of nearest point equals the Euclidean distance to the solution", {
+  comm_profs <- community_profile(cites6, memb)
+
+  AmS_result <- nearest_point('AmS', cites6, memb)
+  AmS_nearest <- drop(comm_profs %*% AmS_result$solution)
+  AmS_profile <- cites6[, 'AmS'] / sum(cites6[, 'AmS'])
+  expect_gte(AmS_result$value, 0)
+  expect_lte(AmS_result$value, sqrt(2))
+  expect_equal(sum((AmS_profile - AmS_nearest)^2), AmS_result$value)
+
+  AoS_result <- nearest_point('AoS', cites6, memb)
+  AoS_nearest <- drop(comm_profs %*% AoS_result$solution)
+  AoS_profile <- cites6[, 'AoS'] / sum(cites6[, 'AoS'])
+  expect_gte(AoS_result$value, 0)
+  expect_lte(AoS_result$value, sqrt(2))
+  expect_equal(sum((AoS_profile - AoS_nearest)^2), AoS_result$value)
+})
+
 test_that("A singleton community's profile should equal its constituent journal profile", {
   # AmS (community 1), AoS (community 3) and BioJ (community 4) are singletons in `memb`.
   expect_equal(cprofile(cites6)[, 'AmS'], community_profile(cites6, memb)[, memb['AmS']])

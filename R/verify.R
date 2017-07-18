@@ -17,9 +17,9 @@
 #' @param b the second vector to be compared
 #'
 #' @examples
-#' 0.3333333 %=% (1/3)
+#' 0.3333333333333333 %=% (1/3)
 #' verify(pi, 3.14159)
-#' (1:5 + 1e-6) %=% 1:5
+#' (1:5 + 1e-15) %=% 1:5
 #' mean(rnorm(1e6, sd = 1e-3)) %=% 0
 #'
 #' @rdname verify
