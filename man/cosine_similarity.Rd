@@ -28,7 +28,7 @@ Therefore, if we want to \emph{maximise} cosine similarity, we can minimise Eucl
 and then make the conversion. See \code{\link[=nearest_point]{nearest_point()}}.
 }
 \references{
-\link{https://en.wikipedia.org/wiki/Cosine_similarity}
+\url{https://en.wikipedia.org/wiki/Cosine_similarity}
 }
 \seealso{
 \code{\link[=nearest_cosine]{nearest_cosine()}}, \code{\link[=cos]{cos()}}, \code{\link[=acos]{acos()}}

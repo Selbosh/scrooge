@@ -111,6 +111,8 @@ nearest_cosine <- nearest_point
 #' which.max(w) == clusters['Bka']
 #' profiles %*% exp(w) # nearest point
 #'
+#' @importFrom stats dmultinom
+#'
 #' @export
 multinomial_mix <- function(target, profiles) {
   # Calculate log density of each multinomial model
@@ -141,7 +143,7 @@ multinomial_mix <- function(target, profiles) {
 #' Or, if `x` and `y` are non-negative, a value between \eqn{0} and \eqn{1}.
 #'
 #' @references
-#' [https://en.wikipedia.org/wiki/Cosine_similarity]
+#' \url{https://en.wikipedia.org/wiki/Cosine_similarity}
 #'
 #' @seealso [nearest_cosine()], [cos()], [acos()]
 #'
