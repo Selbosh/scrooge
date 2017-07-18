@@ -5,7 +5,7 @@
 #'
 #' @details
 #' The \code{\%=\%} function provides a quick infix (binary) version of \code{\link{all.equal}}
-#' with the \code{tolerance} set to \code{1e-6} and \code{attributes} and \code{names} ignored.
+#' with the \code{tolerance} set to \code{1e-14} and \code{attributes} and \code{names} ignored.
 #' It is useful for simulation results and other approximations that usually
 #' won't be exactly equal on a computer using floating-point arithmetic.
 #'
@@ -26,7 +26,7 @@
 #' @seealso \code{\link{all.equal}} \code{\link{Comparison}} \code{\link{identical}}
 #'
 #' @export
-`%=%` <- function(a, b) all.equal(a, b, tolerance = 1e-6, check.attributes = FALSE, check.names = FALSE)
+`%=%` <- function(a, b) all.equal(drop(a), drop(b), tolerance = 1e-14, check.attributes = FALSE, check.names = FALSE)
 #' @rdname verify
 #' @export
 verify <- `%=%`

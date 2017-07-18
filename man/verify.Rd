@@ -19,7 +19,7 @@ Returns \code{TRUE} if the vectors are about the same, or the mean relative diff
 }
 \details{
 The \code{\%=\%} function provides a quick infix (binary) version of \code{\link{all.equal}}
-with the \code{tolerance} set to \code{1e-6} and \code{attributes} and \code{names} ignored.
+with the \code{tolerance} set to \code{1e-14} and \code{attributes} and \code{names} ignored.
 It is useful for simulation results and other approximations that usually
 won't be exactly equal on a computer using floating-point arithmetic.
 

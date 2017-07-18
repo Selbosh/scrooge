@@ -30,6 +30,14 @@ comms <- setNames(c(1, 2, 3, 2, 2, 4), colnames(counts))
 nearest_point('AoS', counts, comms) # Inside hull (value == 0), because AoS is itself a community.
 nearest_point('ANZS', counts, comms) # Outside hull, near to its own community.
 
+# To which cluster should 'Biometrika' belong?
+distances <- as.dist(1 - cor(citations + t(citations)))
+clusters <- cutree(hclust(distances), h = 0.8)
+result <- nearest_point('Bka', citations, clusters)
+# Verify Euclidean distance is calculated correctly:
+point <- community_profile(citations, clusters) \%*\% result$solution
+result$value \%=\% sum((citations[, 'Bka'] / sum(citations[, 'Bka']) - point)^2)
+
 }
 \seealso{
 \code{\link[quadprog:solve.QP]{quadprog::solve.QP()}}, \code{\link[=community_profile]{community_profile()}}
