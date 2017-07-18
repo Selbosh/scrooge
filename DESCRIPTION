@@ -2,9 +2,10 @@ Package: scrooge
 Type: Package
 Title: Statistical modelling of heterogeneous citation networks
 Version: 0.1.1.9001
-Author: David Selby <d.selby@warwick.ac.uk>
-Maintainer: David Selby <d.selby@warwick.ac.uk>
+Authors@R: as.person("David Selby <d.selby@warwick.ac.uk> [aut, cre]")
 Description: Utilities for the author's doctoral research in bibliometrics.
+URL: https://github.com/Selbosh/scrooge
+BugReports: https://github.com/Selbosh/scrooge/issues
 License: GPL
 LazyData: TRUE
 RoxygenNote: 6.0.1

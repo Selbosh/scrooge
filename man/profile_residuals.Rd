@@ -16,7 +16,7 @@ A numeric vector of standardised residuals, the same length as \code{expected} a
 }
 \description{
 Residuals are calculated using the formula
-\deqn{r_i = \frac{y_i - \hat{y}_i}{\sqrt \hat{y}_i}}{(y_i - E[y_i]) / \sqrt{E[y]_i}}
+\deqn{r_i = \frac{y_i - \hat{y}_i}{\sqrt{\hat{y}_i}}}{(y_i - E[y_i]) / \sqrt{E[y]_i}}
 which treats each element of the citation counts vector as a Poisson variate.
 }
 \details{

@@ -64,7 +64,7 @@ nearest_point <- function(idx, citations, communities, self = TRUE) {
 #'
 #' Geometrically, this represents a point on part of the surface of the unit \eqn{n-1}-sphere
 #'   that is within the positive \href{https://en.wikipedia.org/wiki/Orthant}{closed orthant}
-#'   in \eqn{\mathbb{R}^n}{R^n}.
+#'   in \eqn{R^n}.
 #' In a 3-journal network, this corresponds to the eighth of the unit sphere in the first octant and
 #'   in a 2-journal network, the quarter of the unit circle in the first quadrant.
 #'
@@ -155,7 +155,7 @@ cosine_similarity <- function(x, y) {
 #' Calculate Pearson profile residuals
 #'
 #' Residuals are calculated using the formula
-#' \deqn{r_i = \frac{y_i - \hat{y}_i}{\sqrt \hat{y}_i}}{(y_i - E[y_i]) / \sqrt{E[y]_i}}
+#' \deqn{r_i = \frac{y_i - \hat{y}_i}{\sqrt{\hat{y}_i}}}{(y_i - E[y_i]) / \sqrt{E[y]_i}}
 #' which treats each element of the citation counts vector as a Poisson variate.
 #'
 #' We might want to make a generic S3 function like [stats::residuals()].

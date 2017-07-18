@@ -17,3 +17,15 @@ way of calculating PageRanks, and \code{\link[=ILSR]{ILSR()}}, an estimator for
 the Bradley--Terry model. The function \code{\link[=vcovBT]{vcovBT()}} will compute asymptotic
 variance-covariance matrices for the Bradley--Terry model.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/Selbosh/scrooge}
+  \item Report bugs at \url{https://github.com/Selbosh/scrooge/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: David Selby \email{d.selby@warwick.ac.uk}
+
+}

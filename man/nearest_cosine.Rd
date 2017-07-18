@@ -32,7 +32,7 @@ This is also true for any convex combination (finite mixture distribution) of ci
 
 Geometrically, this represents a point on part of the surface of the unit \eqn{n-1}-sphere
 that is within the positive \href{https://en.wikipedia.org/wiki/Orthant}{closed orthant}
-in \eqn{\mathbb{R}^n}{R^n}.
+in \eqn{R^n}.
 In a 3-journal network, this corresponds to the eighth of the unit sphere in the first octant and
 in a 2-journal network, the quarter of the unit circle in the first quadrant.
 
