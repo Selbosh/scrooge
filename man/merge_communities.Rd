@@ -6,14 +6,14 @@
 \alias{merge_communities.igraph}
 \title{Merge communities in a network}
 \usage{
-merge_communities(network, communities)
+merge_communities(x, communities)
 
-\method{merge_communities}{default}(network, communities)
+\method{merge_communities}{default}(x, communities)
 
-\method{merge_communities}{igraph}(network, communities)
+\method{merge_communities}{igraph}(x, communities)
 }
 \arguments{
-\item{network}{A matrix of citation counts (from columns to rows) or an \link[igraph:igraph]{igraph} object.}
+\item{x}{a matrix of citations (from columns to rows) or an \link[igraph:igraph]{igraph} object}
 
 \item{communities}{A numeric vector that specifies the mapping, or a \link[igraph:communities]{communities} object.
 Its elements correspond to the vertices, and for each element the id in the new graph is given.}
@@ -21,7 +21,7 @@ Its elements correspond to the vertices, and for each element the id in the new 
 \value{
 A sparse matrix, representing a contingency table of edges from communities to nodes.
 
-While it would be nice to return an \link[igraph:igraph]{igraph} object when given a \code{network} of that class,
+While it would be nice to return an \link[igraph:igraph]{igraph} object when given an \code{x} of that class,
 the process of aggregating the 'from' nodes while preserving 'to' nodes would mean coercing
 the directed graph to an undirected bipartite graph, then contracting vertices in one mode
 and not the other. This may be difficult to implement, so for the time-being we simply convert
@@ -32,5 +32,5 @@ Aggregate nodes in given communities into 'super-nodes' that represent those com
 and combine any associated inter- or intra-community links.
 }
 \details{
-Any matrix-like \code{network} argument will be coerced to a \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.
+Any matrix-like \code{x} argument will be coerced to a \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.
 }

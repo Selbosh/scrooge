@@ -12,6 +12,7 @@
 #'
 #' @return A numeric vector of standardised residuals, the same length as `expected` and `observed`
 #'
+#' @family functions for residual analysis of communities
 #' @seealso [stats::rstandard.glm()]
 #'
 #' @references
@@ -20,8 +21,9 @@
 #'   New York, NY: Wiley.
 #'
 #' @examples
+#' # Compare citations of 'Biometrika' to those of all stats journals
 #' Bka_counts <- citations[, 'Bka']
-#' mean_profile <- rowSums(citations) / sum(citations)
+#' stats_profile <- rowSums(citations) / sum(citations)
 #' mean_counts <- mean_profile * sum(Bka_counts)
 #' profile_residuals(mean_counts, Bka_counts)
 #'
@@ -38,4 +40,39 @@ profile_residuals <- function(expected, observed) {
   ifelse(expected != 0,
          raw_residual / sqrt(expected),
          0)
+}
+
+#' Predict citations based on community profile
+#'
+#' Based on the nearest community profile, what is the expected distribution of citations
+#' from journal `idx`?
+#'
+#' To vectorise this function, it might be easier first to create a vectorised version of
+#' [nearest_point()].
+#'
+#' @return A vector of predicted outgoing citations from journal `idx`.
+#'
+#' @inheritParams nearest_point
+#' @inheritParams cprofile
+#'
+#' @importFrom igraph strength
+#' @importFrom Matrix colSums
+#'
+#' @export
+fitted_citations <- function(idx, citations, communities, self = TRUE) {
+  if (inherits(citations, 'igraph'))
+    out_citations <- igraph::strength(citations, vids = idx, mode = 'out', loops = self)
+  else
+    out_citations <- Matrix::colSums(citations)[idx]
+  return(nearest_profile(idx, citations, communities, self) * out_citations)
+}
+
+#' Calculate residuals for communities in a network
+#'
+#' @param x a matrix of citations (from columns to rows) or an [igraph][igraph::igraph] object
+#' @inheritParams nearest_point
+#'
+#' @family functions for residual analysis of communities
+community_residuals <- function(citations, communities) {
+  NULL
 }

@@ -4,10 +4,10 @@
 \alias{community_profile}
 \title{Calculate community profiles}
 \usage{
-community_profile(network, ..., self = TRUE)
+community_profile(x, ..., self = TRUE)
 }
 \arguments{
-\item{network}{A matrix of citation counts (from columns to rows) or an \link[igraph:igraph]{igraph} object.}
+\item{x}{a matrix of citations (from columns to rows) or an \link[igraph:igraph]{igraph} object}
 
 \item{\dots}{Further arguments passed to \code{\link[=merge_communities]{merge_communities()}}.}
 

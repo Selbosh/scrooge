@@ -52,9 +52,8 @@ cprofile.igraph <- function(x, self = TRUE) {
 #' Profiles are computed by aggregating the out-links of nodes in each community, then scaling to sum
 #' to one. This means nodes with more out-links have greater influence on their community profiles.
 #'
-#' @param network A matrix of citation counts (from columns to rows) or an [igraph][igraph::igraph] object.
+#' @inheritParams cprofile
 #' @param \dots Further arguments passed to [merge_communities()].
-#' @param self logical. Include self-citations? If `FALSE`, they will not be counted.
 #'
 #' @seealso
 #' [merge_communities()], [cprofile()]
@@ -64,7 +63,7 @@ cprofile.igraph <- function(x, self = TRUE) {
 #' Each column corresponds to a community and each row to a node in the network.
 #'
 #' @export
-community_profile <- function(network, ..., self = TRUE) {
-  merged <- merge_communities(network, ...)
+community_profile <- function(x, ..., self = TRUE) {
+  merged <- merge_communities(x, ...)
   cprofile(merged, self = self)
 }

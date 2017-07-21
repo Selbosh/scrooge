@@ -9,8 +9,6 @@ nearest_cosine(idx, citations, communities, self = TRUE)
 \arguments{
 \item{idx}{A journal name or index.}
 
-\item{citations}{A square contingency table of citation data.}
-
 \item{communities}{A membership vector or \link[igraph:communities]{igraph::communities} object.}
 
 \item{self}{logical. Include self-citations? If \code{FALSE}, they will not be counted.}
