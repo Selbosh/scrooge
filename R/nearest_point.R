@@ -182,13 +182,16 @@ cosine_similarity <- function(x, y) {
 #' @export
 profile_residuals <- function(expected, observed) {
   stopifnot(length(expected) == length(observed))
-  stopifnot(is.numeric(expected) && is.numeric(observed))
   if (any(expected < 0) || any(observed < 0))
     stop('Counts data must be non-negative')
   if (sum(expected) != sum(observed))
     warning('Total number of citations expected is not equal to the total observed')
   raw_residual <- observed - expected
-  raw_residual / sqrt(expected)
+  if (any(observed[expected == 0] > 0))
+    warning('Citations observed when expected rate is zero')
+  ifelse(expected != 0,
+         raw_residual / sqrt(expected),
+         0)
 }
 
 #' Index of dissimilarity
@@ -209,5 +212,5 @@ profile_residuals <- function(expected, observed) {
 dissimilarity <- function(x, y) {
   stopifnot(sum(x) == sum(y))
   stopifnot(length(x) == length(y))
-  abs(x - y) / 2 / sum(x)
+  sum(abs(x - y)) / 2 / sum(x)
 }

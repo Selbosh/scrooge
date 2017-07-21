@@ -1,0 +1,122 @@
+---
+title: "Residual analysis for community detection"
+author: "David Selby"
+date: "`r format(Sys.Date(), '%e %B %Y')`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Residual analysis for community detection}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(fig.width = 6, fig.height = 5)
+```
+
+The [`scrooge`](https://github.com/Selbosh/scrooge) package offers several utilities for diagnosing the output of community detection algorithms.
+
+Consider this canonical example from Varin et al. (2016).
+We have data describing the number of citations exchanged between 47 statistical journals.
+Access it using `data(citations)`.
+
+A standard hierarchical clustering of the data yields eight communities.
+
+```{r clusters, echo = 1:3, results = 'asis'}
+library(scrooge)
+distances <- as.dist(1 - cor(citations + t(citations) - diag(diag(citations))))
+clusters <- cutree(hclust(distances), h = 0.6)
+cat(c('', sapply(split(names(clusters), clusters),
+                       function(x) paste(x, collapse = ', ')
+                 )
+      ),
+    sep = '\n1. ')
+```
+
+An 'expert' review of these clusters may confirm that they look sensible, but that's not good enough for us.
+We want a *quantitative* diagnosis of their descriptive and predictive power.
+
+Consider, for example, the journal *Biometrika*, which falls in the third cluster.
+Is the citation behaviour of this publication described adequately by the community to which it has been assigned?
+
+## Citation profiles
+
+Every journal has a *citation profile*, which is a stochastic vector representing the distribution of that journal's outgoing citations.
+It is the transition probability vector that describes one step of a random walk around the graph.
+
+For example, suppose we have three journals, \(A\), \(B\) and \(C\).
+If half of the references in journal \(C\)'s bibliography were to journal \(A\), a quarter to \(B\) and the remainder to itself, then journal \(C\)'s citation profile would be given by the vector \(\pmatrix{0.5 & 0.25 & 0.25}\).
+
+Communities also have citation profiles, calculated from the citations of their constituent journals.
+How these citations are aggregated is up to you---for now we settle for an unweighted sum, scaled to form a unit vector.
+
+The eight communities in the statistical journals network each have a profile that lies somewhere on the part of the surface of the unit \(46\)-sphere in the positive orthant of \(\mathbb{R}^{47}\).
+
+## Convex combinations of community profiles
+
+However our clustering or community detection algorithm works, we have a grouping of journals into clusters.
+Unless they are really homogeneous, this reduction in dimensionality throws away some detail of each journal's citation behaviour.
+
+How well do the eight clusters describe *Biometrika*'s citation profile?
+
+```{r}
+Biometrika_profile <- citations[, 'Bka'] / colSums(citations)['Bka']
+np <- nearest_point('Bka', citations, clusters)
+near_Biometrika <- community_profile(citations, clusters) %*% np$solution
+dissimilarity(Biometrika_profile, near_Biometrika)
+```
+
+Using the index of dissimilarity, we see that 16% of citations are misallocated, when comparing *Biometrika*'s profile to the nearest possible combination of the eight community profiles.
+
+We can also compute Poisson residuals on the citation counts.
+
+```{r residuals}
+predicted_citations <- as.vector(near_Biometrika * colSums(citations)['Bka'])
+profile_resids <- profile_residuals(predicted_citations, citations[, 'Bka'])
+
+library(ggplot2)
+ggplot(data.frame(journal = names(profile_resids),
+                  residual = profile_resids,
+                  fitted = predicted_citations)) +
+  aes(fitted, residual, label = journal) +
+  geom_hline(yintercept = 0, colour = 'grey80', linetype = 2) +
+  geom_smooth(method = 'loess', colour = 'red', se = FALSE) +
+  geom_text() +
+  theme_classic() +
+  labs(x = 'Predicted citation counts', y = 'Residuals') +
+  scale_x_log10()
+
+qqnorm(profile_resids)
+qqline(profile_resids)
+```
+
+Or for every journal...
+
+```{r all_residuals}
+residuals <- fitted <-
+  matrix(NA, nrow(citations), ncol(citations),
+         dimnames = list(rownames(citations), colnames(citations)))
+
+for (jnl in rownames(citations)) { # Please forgive the use of this loop.
+  qp <- nearest_point(jnl, citations, clusters)
+  pt <- community_profile(citations, clusters) %*% qp$solution
+  fitted[, jnl] <- pmax(as.vector(pt * colSums(citations)[jnl]), 0)
+  residuals[, jnl] <- profile_residuals(fitted[, jnl], citations[, jnl])
+}
+
+residuals[!is.finite(residuals)] <- 0
+```
+
+Aggregating residuals by source journal,
+
+```{r agg_residuals}
+ggplot(data.frame(journal = rownames(citations),
+                  residual = colSums(residuals^2),
+                  jsize = colSums(fitted))) +
+  aes(jsize, residual, label = journal) +
+  geom_smooth(se = FALSE) +
+  geom_text() +
+  labs(x = 'Number of outgoing references', y = 'Sum of squared residuals',
+       title = 'Aggregated residuals', subtitle = 'Without ignoring self-citations') +
+  theme_bw() +
+  scale_x_log10()
+```

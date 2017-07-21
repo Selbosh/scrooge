@@ -1,7 +1,7 @@
 Package: scrooge
 Type: Package
 Title: Statistical modelling of heterogeneous citation networks
-Version: 0.1.1.9001
+Version: 0.1.1.9002
 Authors@R: as.person("David Selby <d.selby@warwick.ac.uk> [aut, cre]")
 Description: Utilities for the author's doctoral research in bibliometrics.
 URL: https://github.com/Selbosh/scrooge
@@ -17,7 +17,8 @@ Imports:
     ggplot2,
     extrafont,
     quadprog,
-    igraph
+    igraph,
+    methods
 Suggests:
     testthat,
     knitr,

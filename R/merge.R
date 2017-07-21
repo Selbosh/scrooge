@@ -27,6 +27,7 @@ merge_communities <- function(network, communities) {
 #' @importFrom Matrix summary sparseMatrix
 #' @importFrom stats aggregate
 #' @importFrom igraph membership
+#' @import methods
 #' @export
 merge_communities.default <- function(network, communities) {
   if (inherits(communities, 'communities'))
