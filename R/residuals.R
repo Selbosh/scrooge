@@ -64,6 +64,7 @@ profile_residuals <- function(expected, observed) {
 #' fitted_citations(NULL, citations, clusters)
 #' fitted_citations('Bka', citations, clusters)
 #'
+#' @family functions for residual analysis of communities
 #' @export
 fitted_citations <- function(idx = NULL, citations, communities, self = TRUE) {
   idx <- get_journal_IDs(idx, citations)
@@ -72,15 +73,24 @@ fitted_citations <- function(idx = NULL, citations, communities, self = TRUE) {
   else
     outcitations <- Matrix::colSums(citations)[idx]
   nprofs <- nearest_profile(idx, citations, communities, self)
+  nprofs[nprofs < 0] <- 0
   nprofs * rep(outcitations, each = nrow(nprofs))
 }
 
 #' Calculate residuals for communities in a network
 #'
-#' @param x a matrix of citations (from columns to rows) or an [igraph][igraph::igraph] object
+#' Compute the residual sum of squares for each journal in a network, given a community structure.
+#' @inheritParams cprofile
 #' @inheritParams nearest_point
-#'
 #' @family functions for residual analysis of communities
-community_residuals <- function(citations, communities) {
-  NULL
+#' @examples
+#' distances <- as.dist(1 - cor(citations + t(citations) - diag(diag(citations))))
+#' clusters <- cutree(hclust(distances), h = 0.6)
+#' cr <- community_residuals(citations, clusters)
+#' plot(colSums(citations), cr, xlab = 'Journal size', ylab = 'Journal RSS')
+#' @export
+community_residuals <- function(x, communities, self = TRUE) {
+  pr <- profile_residuals(expected = fitted_citations(NULL, x, communities, self),
+                          observed = citations)
+  colSums(pr^2)
 }

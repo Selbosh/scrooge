@@ -31,3 +31,7 @@ fitted_citations(NULL, citations, clusters)
 fitted_citations('Bka', citations, clusters)
 
 }
+\seealso{
+Other functions for residual analysis of communities: \code{\link{community_residuals}},
+  \code{\link{profile_residuals}}
+}

@@ -39,5 +39,6 @@ New York, NY: Wiley.
 \seealso{
 \code{\link[stats:rstandard.glm]{stats::rstandard.glm()}}
 
-Other functions for residual analysis of communities: \code{\link{community_residuals}}
+Other functions for residual analysis of communities: \code{\link{community_residuals}},
+  \code{\link{fitted_citations}}
 }

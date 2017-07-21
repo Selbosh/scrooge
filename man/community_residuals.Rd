@@ -4,16 +4,25 @@
 \alias{community_residuals}
 \title{Calculate residuals for communities in a network}
 \usage{
-community_residuals(citations, communities)
+community_residuals(x, communities, self = TRUE)
 }
 \arguments{
+\item{x}{a matrix of citations (from columns to rows) or an \link[igraph:igraph]{igraph} object}
+
 \item{communities}{A membership vector or \link[igraph:communities]{igraph::communities} object.}
 
-\item{x}{a matrix of citations (from columns to rows) or an \link[igraph:igraph]{igraph} object}
+\item{self}{logical. Include self-citations? If \code{FALSE}, they will not be counted.}
 }
 \description{
-Calculate residuals for communities in a network
+Compute the residual sum of squares for each journal in a network, given a community structure.
+}
+\examples{
+distances <- as.dist(1 - cor(citations + t(citations) - diag(diag(citations))))
+clusters <- cutree(hclust(distances), h = 0.6)
+cr <- community_residuals(citations, clusters)
+plot(colSums(citations), cr, xlab = 'Journal size', ylab = 'Journal RSS')
 }
 \seealso{
-Other functions for residual analysis of communities: \code{\link{profile_residuals}}
+Other functions for residual analysis of communities: \code{\link{fitted_citations}},
+  \code{\link{profile_residuals}}
 }
