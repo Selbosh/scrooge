@@ -4,10 +4,10 @@
 \alias{fitted_citations}
 \title{Predict citations based on community profile}
 \usage{
-fitted_citations(idx, citations, communities, self = TRUE)
+fitted_citations(idx = NULL, citations, communities, self = TRUE)
 }
 \arguments{
-\item{idx}{A journal name or index.}
+\item{idx}{A journal name or index. Vectorised for \code{nearest_profile()}.}
 
 \item{communities}{A membership vector or \link[igraph:communities]{igraph::communities} object.}
 
@@ -23,4 +23,11 @@ from journal \code{idx}?
 \details{
 To vectorise this function, it might be easier first to create a vectorised version of
 \code{\link[=nearest_point]{nearest_point()}}.
+}
+\examples{
+distances <- as.dist(1 - cor(citations + t(citations) - diag(diag(citations))))
+clusters <- cutree(hclust(distances), h = 0.6)
+fitted_citations(NULL, citations, clusters)
+fitted_citations('Bka', citations, clusters)
+
 }

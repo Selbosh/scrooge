@@ -58,13 +58,21 @@ profile_residuals <- function(expected, observed) {
 #' @importFrom igraph strength
 #' @importFrom Matrix colSums
 #'
+#' @examples
+#' distances <- as.dist(1 - cor(citations + t(citations) - diag(diag(citations))))
+#' clusters <- cutree(hclust(distances), h = 0.6)
+#' fitted_citations(NULL, citations, clusters)
+#' fitted_citations('Bka', citations, clusters)
+#'
 #' @export
-fitted_citations <- function(idx, citations, communities, self = TRUE) {
+fitted_citations <- function(idx = NULL, citations, communities, self = TRUE) {
+  idx <- get_journal_IDs(idx, citations)
   if (inherits(citations, 'igraph'))
-    out_citations <- igraph::strength(citations, vids = idx, mode = 'out', loops = self)
+    outcitations <- igraph::strength(citations)[idx]
   else
-    out_citations <- Matrix::colSums(citations)[idx]
-  return(nearest_profile(idx, citations, communities, self) * out_citations)
+    outcitations <- Matrix::colSums(citations)[idx]
+  nprofs <- nearest_profile(idx, citations, communities, self)
+  nprofs * rep(outcitations, each = nrow(nprofs))
 }
 
 #' Calculate residuals for communities in a network

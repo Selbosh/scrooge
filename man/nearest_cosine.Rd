@@ -7,7 +7,7 @@
 nearest_cosine(idx, citations, communities, self = TRUE)
 }
 \arguments{
-\item{idx}{A journal name or index.}
+\item{idx}{A journal name or index. Vectorised for \code{nearest_profile()}.}
 
 \item{communities}{A membership vector or \link[igraph:communities]{igraph::communities} object.}
 

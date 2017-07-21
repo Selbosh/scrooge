@@ -10,7 +10,7 @@
 #' The function `nearest_profile` is a shorthand way to calculate the *profile* corresponding
 #' to the nearest point.
 #'
-#' @param idx A journal name or index.
+#' @param idx A journal name or index. Vectorised for `nearest_profile()`.
 #' @param communities A membership vector or [igraph::communities] object.
 #' @inheritParams cprofile
 #'
@@ -90,11 +90,33 @@ nearest_cosine <- nearest_point
 
 #' @rdname nearest_point
 #' @return `nearest_profile()` returns a stochastic vector whose length is equal
-#'   to the number of rows/vertices in `citations`.
+#'   to the number of rows/vertices in `citations`. It is also vectorised, so if
+#'   `idx` has length > 1, a matrix will be returned instead.
 #' @export
-nearest_profile <- function(idx, citations, communities, self = TRUE) {
-  near_pt <- nearest_point(idx, citations, communities, self)
-  community_profile(citations, communities) %*% near_pt$solution
+nearest_profile <- function(idx = NULL, citations, communities, self = TRUE) {
+  idx <- get_journal_IDs(idx, citations)
+  cp <- community_profile(citations, communities)
+  vapply(idx,
+         function(i) {
+           drop(as.matrix(
+            cp %*% nearest_point(i, citations, communities, self)$solution
+           ))
+           },
+         FUN.VALUE = numeric(nrow(cp))
+         )
+}
+
+#' Get all journal IDs if none specified
+#'
+#' If `idx` is `NULL` then the function will attempt to select *all* journals.
+#' @inheritParams nearest_point
+#' @return A vector of journal names
+get_journal_IDs <- function(idx = NULL, citations) {
+  if (!is.null(idx))
+    return(idx)
+  if (inherits(citations, 'igraph'))
+    return(V(citations)$name)
+  rownames(citations)
 }
 
 #' Multinomial mixture probabilities
