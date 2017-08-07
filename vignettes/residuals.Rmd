@@ -69,54 +69,80 @@ Using the index of dissimilarity, we see that 16% of citations are misallocated,
 
 We can also compute Poisson residuals on the citation counts.
 
-```{r residuals}
-predicted_citations <- as.vector(near_Biometrika * colSums(citations)['Bka'])
+```{r residuals, message = FALSE}
+predicted_citations <- fitted_citations('Bka', citations, clusters)
 profile_resids <- profile_residuals(predicted_citations, citations[, 'Bka'])
 
-library(ggplot2)
-ggplot(data.frame(journal = names(profile_resids),
-                  residual = profile_resids,
-                  fitted = predicted_citations)) +
+library(tidyverse)
+theme_set(theme_bw())
+resids_df <- data_frame(journal = rownames(profile_resids),
+                        residual = drop(profile_resids),
+                        fitted = drop(predicted_citations),
+                        q_theo = qqnorm(residual, plot = F)$x)
+
+ggplot(resids_df) +
   aes(fitted, residual, label = journal) +
-  geom_hline(yintercept = 0, colour = 'grey80', linetype = 2) +
-  geom_smooth(method = 'loess', colour = 'red', se = FALSE) +
-  geom_text() +
-  theme_classic() +
-  labs(x = 'Predicted citation counts', y = 'Residuals') +
-  scale_x_log10()
+  geom_hline(yintercept = 0, colour = 'steelblue', linetype = 2) +
+  geom_smooth(method = 'loess', colour = 'steelblue', se = FALSE) +
+  geom_text(aes(colour = journal == 'Bka')) +
+  labs(x = 'Predicted citation counts', y = 'Residuals',
+       main = 'Profile residuals for \'Biometrika\'') +
+  scale_colour_manual(values = c('black', 'tomato2'), guide = 'none')
 
-qqnorm(profile_resids)
-qqline(profile_resids)
-```
-
-Or for every journal...
-
-```{r all_residuals}
-residuals <- fitted <-
-  matrix(NA, nrow(citations), ncol(citations),
-         dimnames = list(rownames(citations), colnames(citations)))
-
-for (jnl in rownames(citations)) { # Please forgive the use of this loop.
-  qp <- nearest_point(jnl, citations, clusters)
-  pt <- community_profile(citations, clusters) %*% qp$solution
-  fitted[, jnl] <- pmax(as.vector(pt * colSums(citations)[jnl]), 0)
-  residuals[, jnl] <- profile_residuals(fitted[, jnl], citations[, jnl])
+ggqqline <- function(vec, distribution = qnorm, probs = c(.25, .75), ...) {
+  # Replicates stats::qqline in 'ggplot2'
+  y <- quantile(vec, probs)
+  x <- distribution(probs, ...)
+  slope <- diff(y) / diff(x)
+  intercept <- y[1L] - slope * x[1L]
+  return(geom_abline(intercept = intercept, slope = slope))
 }
 
-residuals[!is.finite(residuals)] <- 0
+ggplot(resids_df) +
+  aes(q_theo, residual, label = journal) +
+  geom_text(aes(colour = journal == 'Bka')) +
+  scale_colour_manual(values = c('black', 'tomato2'), guide = 'none') +
+  ggqqline(profile_resids) +
+  labs(x = 'Normal quantiles',
+       y = 'Sample quantiles',
+       title = 'Profile residuals for \'Biometrika\'')
 ```
 
-Aggregating residuals by source journal,
+Using the `community_residuals()` function from the **scrooge** package, we can calculate the residual sum of squares of residuals of each journal based on the given community structure.
 
-```{r agg_residuals}
-ggplot(data.frame(journal = rownames(citations),
-                  residual = colSums(residuals^2),
-                  jsize = colSums(fitted))) +
-  aes(jsize, residual, label = journal) +
-  geom_smooth(se = FALSE) +
+```{r community_residuals}
+community_resids <- data_frame(journal = rownames(citations),
+                               articles = drop(scrooge::articles),
+                               residual = community_residuals(citations, clusters),
+                               outcitations = colSums(citations),
+                               q_norm = qqnorm(residual, plot = F)$x,
+                               q_chi = qchisq(ppoints(nrow(citations))[order(order(residual))], df = nrow(citations)))
+
+ggplot(community_resids) +
+  aes(outcitations, residual, label = journal) +
+  geom_smooth(method = 'loess', se = F) +
   geom_text() +
-  labs(x = 'Number of outgoing references', y = 'Sum of squared residuals',
-       title = 'Aggregated residuals', subtitle = 'Without ignoring self-citations') +
-  theme_bw() +
-  scale_x_log10()
+  labs(x = 'Outgoing citations', y = 'Profile residual sum of squares',
+       title = 'Community residuals against outgoing citation count')
+
+ggplot(community_resids) +
+  aes(articles, residual, label = journal) +
+  geom_smooth(method = 'loess', se = F) +
+  geom_text() +
+  labs(x = 'Number of articles', y = 'Profile residual sum of squares',
+       title = 'Community residuals against journal size')
+
+ggplot(community_resids) +
+  aes(q_norm, residual, label = journal) +
+  geom_text() +
+  ggqqline(community_resids$residual) +
+  labs(x = 'Normal quantiles', y = 'Sample quantiles',
+       title = 'QQ plot for community residuals (profile residual sum of squares)')
+
+ggplot(community_resids) +
+  aes(q_chi, residual, label = journal) +
+  geom_text() +
+  ggqqline(community_resids$residual, distribution = qchisq, df = nrow(citations)) +
+  labs(x = 'Chi-squared quantiles', y = 'Sample quantiles',
+       title = 'QQ plot for community residuals (profile residual sum of squares)')
 ```
