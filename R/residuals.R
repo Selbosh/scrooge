@@ -32,7 +32,7 @@ profile_residuals <- function(expected, observed) {
   stopifnot(length(expected) == length(observed))
   if (any(expected < 0) || any(observed < 0))
     stop('Counts data must be non-negative')
-  if (sum(expected) != sum(observed))
+  if (!isTRUE(all.equal(sum(observed), sum(expected), check.attributes = FALSE)))
     warning('Total number of citations expected is not equal to the total observed')
   raw_residual <- observed - expected
   if (any(observed[expected == 0] > 0))
@@ -87,7 +87,8 @@ fitted_citations <- function(idx = NULL, citations, communities, self = TRUE) {
 #' distances <- as.dist(1 - cor(citations + t(citations) - diag(diag(citations))))
 #' clusters <- cutree(hclust(distances), h = 0.6)
 #' cr <- community_residuals(citations, clusters)
-#' plot(colSums(citations), cr, xlab = 'Journal size', ylab = 'Journal RSS')
+#' plot(colSums(citations), cr, xlab = 'Journal size', ylab = 'Journal RSS', type = 'n')
+#' text(colSums(citations), cr, labels = colnames(citations))
 #' @export
 community_residuals <- function(x, communities, self = TRUE) {
   pr <- profile_residuals(expected = fitted_citations(NULL, x, communities, self),

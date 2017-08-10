@@ -20,7 +20,8 @@ Compute the residual sum of squares for each journal in a network, given a commu
 distances <- as.dist(1 - cor(citations + t(citations) - diag(diag(citations))))
 clusters <- cutree(hclust(distances), h = 0.6)
 cr <- community_residuals(citations, clusters)
-plot(colSums(citations), cr, xlab = 'Journal size', ylab = 'Journal RSS')
+plot(colSums(citations), cr, xlab = 'Journal size', ylab = 'Journal RSS', type = 'n')
+text(colSums(citations), cr, labels = colnames(citations))
 }
 \seealso{
 Other functions for residual analysis of communities: \code{\link{fitted_citations}},
