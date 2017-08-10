@@ -78,7 +78,7 @@ test_that("'value' of nearest point equals the Euclidean distance to the solutio
   AmS_result <- nearest_point('AmS', cites6, memb)
   AmS_nearest <- drop(comm_profs %*% AmS_result$solution)
   AmS_profile <- cites6[, 'AmS'] / sum(cites6[, 'AmS'])
-  expect_gte(AmS_result$value, 0)
+  expect_gte(AmS_result$value, -1e15)
   expect_lte(AmS_result$value, sqrt(2))
   expect_equal(sum((AmS_profile - AmS_nearest)^2), AmS_result$value)
 
