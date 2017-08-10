@@ -23,9 +23,9 @@
 #' @examples
 #' # Compare citations of 'Biometrika' to those of all stats journals
 #' Bka_counts <- citations[, 'Bka']
-#' stats_profile <- rowSums(citations) / sum(citations)
-#' mean_counts <- mean_profile * sum(Bka_counts)
-#' profile_residuals(mean_counts, Bka_counts)
+#' average_profile <- rowSums(citations) / sum(citations)
+#' expected_counts <- average_profile * sum(Bka_counts)
+#' profile_residuals(expected_counts, Bka_counts)
 #'
 #' @export
 profile_residuals <- function(expected, observed) {
