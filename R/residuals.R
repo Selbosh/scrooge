@@ -90,8 +90,8 @@ fitted_citations <- function(idx = NULL, citations, communities, self = TRUE) {
 #' plot(colSums(citations), cr, xlab = 'Journal size', ylab = 'Journal RSS', type = 'n')
 #' text(colSums(citations), cr, labels = colnames(citations))
 #' @export
-community_residuals <- function(x, communities, self = TRUE) {
-  pr <- profile_residuals(expected = fitted_citations(NULL, x, communities, self),
+community_residuals <- function(citations, communities, self = TRUE) {
+  pr <- profile_residuals(expected = fitted_citations(NULL, citations, communities, self),
                           observed = citations)
   colSums(pr^2)
 }

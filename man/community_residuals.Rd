@@ -4,12 +4,12 @@
 \alias{community_residuals}
 \title{Calculate residuals for communities in a network}
 \usage{
-community_residuals(x, communities, self = TRUE)
+community_residuals(citations, communities, self = TRUE)
 }
 \arguments{
-\item{x}{a matrix of citations (from columns to rows) or an \link[igraph:igraph]{igraph} object}
+\item{citations}{a matrix of citations (from columns to rows) or an \link[igraph:igraph]{igraph} object}
 
-\item{communities}{A membership vector or \link[igraph:communities]{igraph::communities} object.}
+\item{communities}{A membership vector or \link[igraph:communities]{igraph::communities} object}
 
 \item{self}{logical. Include self-citations? If \code{FALSE}, they will not be counted.}
 }

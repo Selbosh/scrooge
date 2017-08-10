@@ -10,9 +10,11 @@ nearest_point(idx, citations, communities, self = TRUE)
 nearest_profile(idx = NULL, citations, communities, self = TRUE)
 }
 \arguments{
-\item{idx}{A journal name or index. Vectorised for \code{nearest_profile()}.}
+\item{idx}{A journal name or index. Vectorised for \code{nearest_profile()}}
 
-\item{communities}{A membership vector or \link[igraph:communities]{igraph::communities} object.}
+\item{citations}{a matrix of citations (from columns to rows) or an \link[igraph:igraph]{igraph} object}
+
+\item{communities}{A membership vector or \link[igraph:communities]{igraph::communities} object}
 
 \item{self}{logical. Include self-citations? If \code{FALSE}, they will not be counted.}
 }

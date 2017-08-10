@@ -7,7 +7,9 @@
 get_journal_IDs(idx = NULL, citations)
 }
 \arguments{
-\item{idx}{A journal name or index. Vectorised for \code{nearest_profile()}.}
+\item{idx}{A journal name or index. Vectorised for \code{nearest_profile()}}
+
+\item{citations}{a matrix of citations (from columns to rows) or an \link[igraph:igraph]{igraph} object}
 }
 \value{
 A vector of journal names

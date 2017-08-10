@@ -10,8 +10,9 @@
 #' The function `nearest_profile` is a shorthand way to calculate the *profile* corresponding
 #' to the nearest point.
 #'
-#' @param idx A journal name or index. Vectorised for `nearest_profile()`.
-#' @param communities A membership vector or [igraph::communities] object.
+#' @param idx A journal name or index. Vectorised for `nearest_profile()`
+#' @param citations a matrix of citations (from columns to rows) or an [igraph][igraph::igraph] object
+#' @param communities A membership vector or [igraph::communities] object
 #' @inheritParams cprofile
 #'
 #' @return
