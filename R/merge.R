@@ -45,9 +45,9 @@ merge_communities.default <- function(x, communities) {
 #' @importFrom Matrix t
 #' @export
 merge_communities.igraph <- function(x, communities) {
-  network <- igraph::as_adjacency_matrix(x,
-                                         attr = switch(igraph::is.weighted(x), 'weight'),
-                                         sparse = TRUE)
-  network <- Matrix::t(network)
-  NextMethod('merge_communities', network)
+  x <- igraph::as_adjacency_matrix(x,
+                                   attr = switch(igraph::is.weighted(x), 'weight'),
+                                   sparse = TRUE)
+  x <- Matrix::t(x)
+  NextMethod('merge_communities', x)
 }
