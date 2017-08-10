@@ -1,13 +1,15 @@
-#' @title Verify if two vectors are approximately equal
+#' @title Compare two vectors numerically
 #'
 #' @description
-#' Returns \code{TRUE} if the vectors are about the same, or the mean relative difference if not.
+#' Check if all elements of one vector are equal, larger or smaller than those of another vector,
+#' allowing for errors in floating-point arithmetic.
 #'
 #' @details
-#' The \code{\%=\%} function provides a quick infix (binary) version of \code{\link{all.equal}}
-#' with the \code{tolerance} set to \code{1e-14} and \code{attributes} and \code{names} ignored.
-#' It is useful for simulation results and other approximations that usually
-#' won't be exactly equal on a computer using floating-point arithmetic.
+#' \code{\%==\%} checks for (approximate) equality,
+#' \code{\%>=\%} tests if `a` is greater than or equal to `b` and
+#' \code{\%<=\%} tests the reverse.
+#' A \code{\%<\%} or \code{\%>\%} operator would be redundant
+#' (and conflict with `magrittr`).
 #'
 #' Be aware that some binary operators, such as \code{`/`} take precedence,
 #' so make sure to wrap \code{a} and \code{b} in brackets where appropriate.
@@ -16,17 +18,28 @@
 #' @param a the first vector to be compared
 #' @param b the second vector to be compared
 #'
-#' @examples
-#' 0.3333333333333333 %=% (1/3)
-#' verify(pi, 3.14159)
-#' (1:5 + 1e-15) %=% 1:5
-#' mean(rnorm(1e6, sd = 1e-3)) %=% 0
+#' @return `TRUE` or `FALSE` or `NA`
 #'
-#' @rdname verify
+#' @examples
+#' 0.333333 %==% (1/3)
+#' 0.999999 %<=% 1
+#' -1e-16 %>=% 0
+#' verify(pi, 3.141592654)
+#'
 #' @seealso \code{\link{all.equal}} \code{\link{Comparison}} \code{\link{identical}}
 #'
-#' @export
-`%=%` <- function(a, b) all.equal(drop(a), drop(b), tolerance = 1e-14, check.attributes = FALSE, check.names = FALSE)
 #' @rdname verify
 #' @export
-verify <- `%=%`
+verify <- function(a, b) all(abs(a - b) < .Machine$double.eps^.5)
+
+#' @rdname verify
+#' @export
+`%==%` <- verify
+
+#' @rdname verify
+#' @export
+`%>=%` <- function(a, b) all(a > b - .Machine$double.eps^.5)
+
+#' @rdname verify
+#' @export
+`%<=%` <- function(a, b) all(a < b + .Machine$double.eps^.5)

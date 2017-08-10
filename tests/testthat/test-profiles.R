@@ -34,7 +34,7 @@ context("Community profiles")
 test_that("Community profiles are probabilities", {
   expect_true(all(community_profile(cites6, memb) >= 0))
   expect_true(all(community_profile(cites6, memb) <= 1))
-  expect_true(all.equal(Matrix::colSums(community_profile(cites6, memb)), rep.int(1, ncommunities), check.names = FALSE))
+  expect_true(Matrix::colSums(community_profile(cites6, memb)) %==% rep.int(1, ncommunities))
 })
 
 test_that("Community profile dimensions are correct", {
@@ -52,17 +52,17 @@ test_that("Single-journal communities lie within convex hull", {
 })
 
 test_that("Distances to convex hull are non-negative", {
-  expect_gte(as.vector(nearest_point('AmS', cites6, memb)$value),  -1e-15)
-  expect_gte(as.vector(nearest_point('AISM', cites6, memb)$value), -1e-15)
-  expect_gte(as.vector(nearest_point('ANZS', cites6, memb)$value), -1e-15)
-  expect_gte(as.vector(nearest_point('BioJ', cites6, memb)$value), -1e-15)
+  expect_true(nearest_point('AmS', cites6, memb)$value  %>=% 0)
+  expect_true(nearest_point('AISM', cites6, memb)$value %>=% 0)
+  expect_true(nearest_point('ANZS', cites6, memb)$value %>=% 0)
+  expect_true(nearest_point('BioJ', cites6, memb)$value %>=% 0)
 })
 
 test_that("Coordinates of nearest point are a convex combination of communities", {
   expect_equal(sum(nearest_point('AmS', cites6, memb)$solution), 1)
   expect_equal(sum(nearest_point('AoS', cites6, memb)$solution), 1)
-  expect_true(all(nearest_point('AISM', cites6, memb)$solution > -1e-15))
-  expect_true(all(nearest_point('BioJ', cites6, memb)$solution > -1e-15))
+  expect_true(nearest_point('AISM', cites6, memb)$solution %>=% 0)
+  expect_true(nearest_point('BioJ', cites6, memb)$solution %>=% 0)
 })
 
 test_that("Distances are consistent between igraph and matrix input", {
@@ -78,14 +78,14 @@ test_that("'value' of nearest point equals the Euclidean distance to the solutio
   AmS_result <- nearest_point('AmS', cites6, memb)
   AmS_nearest <- drop(comm_profs %*% AmS_result$solution)
   AmS_profile <- cites6[, 'AmS'] / sum(cites6[, 'AmS'])
-  expect_gte(AmS_result$value, -1e15)
+  expect_true(AmS_result$value %>=% 0)
   expect_lte(AmS_result$value, sqrt(2))
   expect_equal(sum((AmS_profile - AmS_nearest)^2), AmS_result$value)
 
   AoS_result <- nearest_point('AoS', cites6, memb)
   AoS_nearest <- drop(comm_profs %*% AoS_result$solution)
   AoS_profile <- cites6[, 'AoS'] / sum(cites6[, 'AoS'])
-  expect_gte(AoS_result$value, 0)
+  expect_true(AoS_result$value %>=% 0)
   expect_lte(AoS_result$value, sqrt(2))
   expect_equal(sum((AoS_profile - AoS_nearest)^2), AoS_result$value)
 })
