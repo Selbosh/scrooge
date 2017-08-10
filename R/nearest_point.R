@@ -30,7 +30,7 @@
 #' result <- nearest_point('Bka', citations, clusters)
 #' # Verify Euclidean distance is calculated correctly:
 #' point <- community_profile(citations, clusters) %*% result$solution
-#' result$value %=% sum((citations[, 'Bka'] / sum(citations[, 'Bka']) - point)^2)
+#' result$value %==% sum((citations[, 'Bka'] / sum(citations[, 'Bka']) - point)^2)
 #'
 #' @seealso
 #' [quadprog::solve.QP()], [community_profile()]

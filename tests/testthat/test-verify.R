@@ -18,6 +18,7 @@ test_that("Prefix operator verify() works on vectors", {
 })
 
 test_that("<= and >= are both TRUE iff a == b", {
+  set.seed(1)
   for (i in 1:100) {
     a <- runif(1)
     b <- runif(1)
