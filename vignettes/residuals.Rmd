@@ -13,7 +13,7 @@ vignette: >
 knitr::opts_chunk$set(fig.width = 6, fig.height = 5)
 ```
 
-The [`scrooge`](https://github.com/Selbosh/scrooge) package offers several utilities for diagnosing the output of community detection algorithms.
+The **scrooge** package offers several utilities for diagnosing the output of community detection algorithms.
 
 Consider this canonical example from Varin et al. (2016).
 We have data describing the number of citations exchanged between 47 statistical journals.
@@ -70,14 +70,54 @@ Using the index of dissimilarity, we see that 16% of citations are misallocated,
 We can also compute Poisson residuals on the citation counts.
 
 ```{r residuals, message = FALSE}
-predicted_citations <- fitted_citations('Bka', citations, clusters)
-profile_resids <- profile_residuals(predicted_citations, citations[, 'Bka'])
+Bka_predicted <- fitted_citations('Bka', citations, clusters)
+Bka_residuals <- profile_residuals(Bka_predicted, citations[, 'Bka'])
+```
 
-library(tidyverse)
+Do the functions from the **scrooge** package calculate the residuals correctly?
+Recall the formula for Poisson residuals is
+\[
+r_i = \frac{y_i - \hat{y}_i}{\sqrt{\hat{y}_i}}.
+\]
+
+```{r residual_test}
+library(testthat)
+all.equal(
+  Bka_residuals,
+  (citations[, 'Bka'] - Bka_predicted) / sqrt(Bka_predicted)
+)
+```
+How might we calculate this using a (null) `glm`?
+
+Remember, a Poisson regression takes the form
+\[
+\log\mathbb{E[y]} = \mathbf{X}\boldsymbol\beta,
+\]
+so we will need to take logs whenever referring to predictors that are on the same scale as responses.
+
+**To do:** Build this into some unit tests
+
+```{r residual_test_glm}
+model <- glm(citations[, 'Bka'] ~ 0 + offset(log(Bka_predicted)), family = 'poisson')
+all.equal(drop(Bka_residuals),
+          resid(model, type = 'pearson'),
+          check.attributes = FALSE)
+```
+
+```{r}
+## Now accounting for self-citation:
+
+# excess_selfcites <- diag(diag(citations))[, rownames(citations) == 'Bka']
+# dummy_selfcites  <- as.numeric(rownames(citations) == 'Bka')
+# selfcite_model  <- glm(citations[, 'Bka'] ~ predicted_citations + excess_selfcites - 1, family = 'poisson')
+# selfcite_model2 <- glm(citations[, 'Bka'] ~ predicted_citations + dummy_selfcites  - 1, family = 'poisson')
+# fitted(selfcite_model) - predicted_citations
+
+suppressPackageStartupMessages(library(tidyverse))
 theme_set(theme_bw())
-resids_df <- data_frame(journal = rownames(profile_resids),
-                        residual = drop(profile_resids),
-                        fitted = drop(predicted_citations),
+resids_df <- data_frame(journal = rownames(Bka_residuals),
+                        residual = drop(Bka_residuals),
+                        fitted = drop(Bka_predicted),
                         q_theo = qqnorm(residual, plot = F)$x)
 
 ggplot(resids_df) +
@@ -91,24 +131,25 @@ ggplot(resids_df) +
 
 ggqqline <- function(vec, distribution = qnorm, probs = c(.25, .75), ...) {
   # Replicates stats::qqline in 'ggplot2'
-  y <- quantile(vec, probs)
+  # NB: ggplot2 2.2.1.9000 offers stat_qq_line & geom_qq_line
+  y <- stats::quantile(vec, probs)
   x <- distribution(probs, ...)
   slope <- diff(y) / diff(x)
   intercept <- y[1L] - slope * x[1L]
-  return(geom_abline(intercept = intercept, slope = slope))
+  ggplot2::geom_abline(intercept = intercept, slope = slope)
 }
 
 ggplot(resids_df) +
   aes(q_theo, residual, label = journal) +
   geom_text(aes(colour = journal == 'Bka')) +
   scale_colour_manual(values = c('black', 'tomato2'), guide = 'none') +
-  ggqqline(profile_resids) +
+  ggqqline(Bka_residuals) +
   labs(x = 'Normal quantiles',
        y = 'Sample quantiles',
        title = 'Profile residuals for \'Biometrika\'')
 ```
 
-Using the `community_residuals()` function from the **scrooge** package, we can calculate the residual sum of squares of residuals of each journal based on the given community structure.
+Using the `community_residuals()` function from the **scrooge** package, we can calculate the residual sum of squares for each journal based on a given community structure.
 
 ```{r community_residuals}
 community_resids <- data_frame(journal = rownames(citations),
