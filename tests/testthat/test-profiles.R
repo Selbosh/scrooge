@@ -14,7 +14,7 @@ ig_weighted <- igraph::graph_from_adjacency_matrix(t(citations), weighted = TRUE
 test_that("Journal profiles are probabilities", {
   expect_true(all(cprofile(citations) >= 0))
   expect_true(all(cprofile(citations) <= 1))
-  expect_equivalent(colSums(cprofile(citations)), rep.int(1, ncol(citations)))
+  expect_equivalent(Matrix::colSums(cprofile(citations)), rep.int(1, ncol(citations)))
 })
 
 test_that("Journal profiles have same dimension as citations", {
@@ -34,7 +34,7 @@ context("Community profiles")
 test_that("Community profiles are probabilities", {
   expect_true(all(community_profile(cites6, memb) >= 0))
   expect_true(all(community_profile(cites6, memb) <= 1))
-  expect_true(all.equal(colSums(community_profile(cites6, memb)), rep.int(1, ncommunities), check.names = FALSE))
+  expect_true(all.equal(Matrix::colSums(community_profile(cites6, memb)), rep.int(1, ncommunities), check.names = FALSE))
 })
 
 test_that("Community profile dimensions are correct", {
