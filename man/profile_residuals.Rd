@@ -26,9 +26,9 @@ We might want to make a generic S3 function like \code{\link[stats:residuals]{st
 \examples{
 # Compare citations of 'Biometrika' to those of all stats journals
 Bka_counts <- citations[, 'Bka']
-stats_profile <- rowSums(citations) / sum(citations)
-mean_counts <- mean_profile * sum(Bka_counts)
-profile_residuals(mean_counts, Bka_counts)
+average_profile <- rowSums(citations) / sum(citations)
+expected_counts <- average_profile * sum(Bka_counts)
+profile_residuals(expected_counts, Bka_counts)
 
 }
 \references{
