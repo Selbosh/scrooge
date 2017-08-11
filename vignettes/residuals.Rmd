@@ -2,7 +2,9 @@
 title: "Residual analysis for community detection"
 author: "David Selby"
 date: "`r format(Sys.Date(), '%e %B %Y')`"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    df_print: kable
 vignette: >
   %\VignetteIndexEntry{Residual analysis for community detection}
   %\VignetteEngine{knitr::rmarkdown}
@@ -11,6 +13,16 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(fig.width = 6, fig.height = 5)
+
+ggqqline <- function(vec, distribution = qnorm, probs = c(.25, .75), ...) {
+  # Replicates stats::qqline in 'ggplot2'
+  # NB: ggplot2 2.2.1.9000 offers stat_qq_line & geom_qq_line
+  y <- stats::quantile(vec, probs)
+  x <- distribution(probs, ...)
+  slope <- diff(y) / diff(x)
+  intercept <- y[1L] - slope * x[1L]
+  ggplot2::geom_abline(intercept = intercept, slope = slope)
+}
 ```
 
 The **scrooge** package offers several utilities for diagnosing the output of community detection algorithms.
@@ -80,12 +92,10 @@ Recall the formula for Poisson residuals is
 r_i = \frac{y_i - \hat{y}_i}{\sqrt{\hat{y}_i}}.
 \]
 
+The binary operator `%==%` allows us to check if two vectors are equal (whilst allowing for floating-point error).
+
 ```{r residual_test}
-library(testthat)
-all.equal(
-  Bka_residuals,
-  (citations[, 'Bka'] - Bka_predicted) / sqrt(Bka_predicted)
-)
+Bka_residuals %==% ((citations[, 'Bka'] - Bka_predicted) / sqrt(Bka_predicted))
 ```
 How might we calculate this using a (null) `glm`?
 
@@ -95,26 +105,17 @@ Remember, a Poisson regression takes the form
 \]
 so we will need to take logs whenever referring to predictors that are on the same scale as responses.
 
-**To do:** Build this into some unit tests
-
 ```{r residual_test_glm}
 model <- glm(citations[, 'Bka'] ~ 0 + offset(log(Bka_predicted)), family = 'poisson')
-all.equal(drop(Bka_residuals),
-          resid(model, type = 'pearson'),
-          check.attributes = FALSE)
+Bka_residuals %==% resid(model, type = 'pearson')
 ```
 
-```{r}
-## Now accounting for self-citation:
+Now that we have calculated some model residuals, we can plot them in the usual way.
 
-# excess_selfcites <- diag(diag(citations))[, rownames(citations) == 'Bka']
-# dummy_selfcites  <- as.numeric(rownames(citations) == 'Bka')
-# selfcite_model  <- glm(citations[, 'Bka'] ~ predicted_citations + excess_selfcites - 1, family = 'poisson')
-# selfcite_model2 <- glm(citations[, 'Bka'] ~ predicted_citations + dummy_selfcites  - 1, family = 'poisson')
-# fitted(selfcite_model) - predicted_citations
-
+```{r residual_plots}
 suppressPackageStartupMessages(library(tidyverse))
 theme_set(theme_bw())
+
 resids_df <- data_frame(journal = rownames(Bka_residuals),
                         residual = drop(Bka_residuals),
                         fitted = drop(Bka_predicted),
@@ -126,28 +127,95 @@ ggplot(resids_df) +
   geom_smooth(method = 'loess', colour = 'steelblue', se = FALSE) +
   geom_text(aes(colour = journal == 'Bka')) +
   labs(x = 'Predicted citation counts', y = 'Residuals',
-       main = 'Profile residuals for \'Biometrika\'') +
+       title = "Profile residuals for 'Biometrika'") +
   scale_colour_manual(values = c('black', 'tomato2'), guide = 'none')
-
-ggqqline <- function(vec, distribution = qnorm, probs = c(.25, .75), ...) {
-  # Replicates stats::qqline in 'ggplot2'
-  # NB: ggplot2 2.2.1.9000 offers stat_qq_line & geom_qq_line
-  y <- stats::quantile(vec, probs)
-  x <- distribution(probs, ...)
-  slope <- diff(y) / diff(x)
-  intercept <- y[1L] - slope * x[1L]
-  ggplot2::geom_abline(intercept = intercept, slope = slope)
-}
 
 ggplot(resids_df) +
   aes(q_theo, residual, label = journal) +
   geom_text(aes(colour = journal == 'Bka')) +
-  scale_colour_manual(values = c('black', 'tomato2'), guide = 'none') +
   ggqqline(Bka_residuals) +
   labs(x = 'Normal quantiles',
        y = 'Sample quantiles',
-       title = 'Profile residuals for \'Biometrika\'')
+       title = "Profile residuals for 'Biometrika'") +
+  scale_colour_manual(values = c('black', 'tomato2'), guide = 'none')
 ```
+
+## Controlling for excessive self-citation behaviour
+
+Notice how *Biometrika* has an extremely high profile residual for citing *itself*.
+In other words, the clustering model is under-predicting self-citations.
+To account for the possibility of 'excess' self-citations, we can add a term to the Poisson regression model.
+
+```{r self_citation}
+Bka_selfcites <- as.numeric(rownames(citations) == 'Bka')
+# Bka_selfcites2 <- diag(diag(citations))[, rownames(citations) == 'Bka'] # actual count
+Bka_selfcite_model <- update(model, . ~ . + Bka_selfcites)
+broom::tidy(Bka_selfcite_model)
+```
+What do the residuals look like now?
+
+```{r self_citation_residuals}
+resids_self_df <- data_frame(journal = rownames(citations),
+                             residual = resid(Bka_selfcite_model, type = 'pearson'),
+                             fitted = fitted(Bka_selfcite_model),
+                             q_theo = qqnorm(residual, plot = F)$x)
+
+ggplot(resids_self_df) +
+  aes(fitted, residual, label = journal) +
+  geom_hline(yintercept = 0, colour = 'steelblue', linetype = 2) +
+  geom_smooth(method = 'loess', colour = 'steelblue', se = FALSE) +
+  geom_text(aes(colour = journal == 'Bka')) +
+  labs(x = 'Predicted citation counts', y = 'Residuals',
+       title = "Profile residuals for 'Biometrika'",
+       subtitle = 'Controlling for excessive self-citation') +
+  scale_colour_manual(values = c('black', 'tomato2'), guide = 'none')
+
+ggplot(resids_self_df) +
+  aes(q_theo, residual, label = journal) +
+  geom_text(aes(colour = journal == 'Bka')) +
+  ggqqline(Bka_residuals) +
+  labs(x = 'Normal quantiles',
+       y = 'Sample quantiles',
+       title = "Profile residuals for 'Biometrika'",
+       subtitle = 'Controlling for excessive self-citation') +
+  scale_colour_manual(values = c('black', 'tomato2'), guide = 'none')
+```
+
+What can explain the departure of the top 9 or so journals from the Q--Q line?
+Could it simply be the mismatch between the Poisson distribution and its Normal approximation?
+Recall that a Poisson distribution may be approximated with Normal when \(\lambda\) is large.
+Some journals' citation rates are larger than others!
+
+The top 10 residuals for the *Biometrika* model are
+
+```{r top10residuals}
+resids_self_df %>%
+  arrange(desc(residual)) %>%
+  select(journal, residual) %>%
+  top_n(10, residual)
+```
+
+Which journals are cited by Biometrika---or Biometrika's community---least?
+
+```{r bottom10bka}
+near_Biometrika %>%
+  as.matrix %>% as.data.frame %>%
+  rownames_to_column('journal') %>%
+  rename(profile = 'V1') %>%
+  arrange(profile)
+
+citations[, 'Bka'] %>%
+  as.data.frame %>%
+  rename(citations = '.') %>%
+  rownames_to_column('journal') %>%
+  filter(citations > 0) %>%
+  arrange(citations) %>%
+  head(n = 10)
+```
+
+Nothing much there, it seems.
+
+## Community residuals
 
 Using the `community_residuals()` function from the **scrooge** package, we can calculate the residual sum of squares for each journal based on a given community structure.
 
