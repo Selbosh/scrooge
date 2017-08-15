@@ -14,10 +14,10 @@ vignette: >
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(fig.width = 6, fig.height = 5)
 
-ggqqline <- function(vec, distribution = qnorm, probs = c(.25, .75), ...) {
+ggqqline <- function(vec, distribution = qnorm, probs = c(.25, .75), ..., na.rm = TRUE) {
   # Replicates stats::qqline in 'ggplot2'
   # NB: ggplot2 2.2.1.9000 offers stat_qq_line & geom_qq_line
-  y <- stats::quantile(vec, probs)
+  y <- stats::quantile(vec, probs, na.rm = na.rm)
   x <- distribution(probs, ...)
   slope <- diff(y) / diff(x)
   intercept <- y[1L] - slope * x[1L]
@@ -255,3 +255,76 @@ ggplot(community_resids) +
   labs(x = 'Chi-squared quantiles', y = 'Sample quantiles',
        title = 'QQ plot for community residuals (profile residual sum of squares)')
 ```
+
+Again, we may want to control for self-citation rates.
+
+## Community residuals controlling for self-citation
+
+Is there a scalable way of doing this without a loop fitting lots of glms?
+
+We want
+
+  - residual sum of squares for each model
+  - where each model is either predicted citations
+  - or predicted citations + self-citation component
+  
+Design matrix?
+
+Compare the null glm:
+
+```{r community_selfcites}
+hat_citations <- fitted_citations(NULL, citations, clusters)
+community_glm <- glm(c(citations) ~ 0 + offset(log(c(hat_citations))), family = poisson)
+community_glm_resids <- resid(community_glm, type = 'pearson')
+community_scrooge_resids <- profile_residuals(hat_citations, citations)
+
+plot(c(community_scrooge_resids), community_glm_resids)
+abline(a = 0, b = 1)
+```
+
+Now we want a glm with self-citation terms added.
+Since the (log) predicted citations are all 'offsets', the design matrix is simply an identity matrix, with one term for each self-citation interaction.
+When we already known the design matrix, we can use the function `glm.fit` rather than `glm`, as follows.
+
+```{r glm_fit, eval = F}
+# X <- Matrix::bdiag(
+#   lapply(rownames(citations), function (x) as.numeric(rownames(citations) == x))
+# )
+# X <- as.data.frame(as.matrix(X))
+# colnames(X) <- make.names(colnames(citations))
+# X$y <- as.vector(citations)
+# 
+# # community_glm_selfcites <- glm.fit(x = as.matrix(X),
+# #                                    y = y,
+# #                                    offset = offset,
+# #                                    family = poisson(),
+# #                                    intercept = FALSE)
+# frmla <- paste('y ~ 0 +', paste(make.names(colnames(citations)),
+#                             collapse = '+'))
+# community_glm_selfcites <- glm(
+#   frmla,
+#   data = X,
+#   offset = log(c(fitted_community)),
+#   family = poisson,
+#   start = runif(47))
+
+get_rss <- function(j) {
+  expected <- fitted_citations(j, citations, clusters)
+  mod <- glm(citations[, j] ~ 0 + as.numeric(rownames(citations) == j),
+             offset = log(expected),
+             family = poisson)
+  sum(resid(mod, type = 'pearson')^2)
+}
+
+for (i in rownames(citations)) {
+  message('Running model for ', i)
+  get_rss(i)
+  message('Model fitted without errors for ', i)
+  message('----------')
+}
+```
+
+1. Errors are thrown when fitting the model for *AmS*.
+2. AoS gets a warning of `fitted rates numerically 0`
+3. An error is thrown when fitting the model for *Bern*.
+
