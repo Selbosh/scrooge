@@ -18,6 +18,8 @@ A numeric vector of standardised residuals, the same length as \code{expected} a
 Residuals are calculated using the formula
 \deqn{r_i = \frac{y_i - \hat{y}_i}{\sqrt{\hat{y}_i}}}{(y_i - E[y_i]) / \sqrt{E[y]_i}}
 which treats each element of the citation counts vector as a Poisson variate.
+If the expected value is zero, \code{NA} is returned.
+(You can decide for yourself whether to omit these observations, treat them as zero or use some other approach.)
 }
 \details{
 We might want to make a generic S3 function like \code{\link[stats:residuals]{stats::residuals()}}.

@@ -16,8 +16,14 @@ test_that("Predicted citations from a given journal are equivalent to from a nul
 test_that("Predicted citations for full network are equivalent to from a null glm", {
   all_predicted <- fitted_citations(NULL, citations, clusters)
   all_residuals <- profile_residuals(all_predicted, citations)
-  all_null_glm <- glm(c(citations) ~ 0 + offset(log(c(all_predicted))), family = poisson)
 
-  expect_true(all_predicted %==% fitted(all_null_glm))
-  expect_true(all(abs(c(all_residuals) - resid(all_null_glm, type = 'pearson')) <= 1e-7))
+  offset <- log(c(all_predicted))
+  offset[!is.finite(offset)] <- NA
+  all_null_glm <- glm(c(citations) ~ 0, offset = offset, family = poisson, na.action = na.exclude)
+  fitted_glm <- fitted(all_null_glm)
+  fitted_glm[is.na(fitted_glm)] <- 0
+
+  expect_true(all_predicted %==% fitted_glm)
+  expect_equal(sum(c(is.na(all_residuals))), sum(is.na(resid(all_null_glm, type = 'pearson')))) # no. of NAs
+  expect_true(all(abs(c(all_residuals) - resid(all_null_glm, type = 'pearson')) <= 1e-7, na.rm = TRUE))
 })

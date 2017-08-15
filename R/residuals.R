@@ -3,6 +3,8 @@
 #' Residuals are calculated using the formula
 #' \deqn{r_i = \frac{y_i - \hat{y}_i}{\sqrt{\hat{y}_i}}}{(y_i - E[y_i]) / \sqrt{E[y]_i}}
 #' which treats each element of the citation counts vector as a Poisson variate.
+#' If the expected value is zero, `NA` is returned.
+#' (You can decide for yourself whether to omit these observations, treat them as zero or use some other approach.)
 #'
 #' We might want to make a generic S3 function like [stats::residuals()].
 #' *Deviance* residuals may be added later. For now we have Pearson residuals only.
@@ -39,7 +41,7 @@ profile_residuals <- function(expected, observed) {
     warning('Citations observed when expected rate is zero')
   ifelse(expected != 0,
          raw_residual / sqrt(expected),
-         0)
+         NA)
 }
 
 #' Predict citations based on community profile
