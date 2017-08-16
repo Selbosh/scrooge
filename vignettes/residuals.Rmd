@@ -286,45 +286,25 @@ Now we want a glm with self-citation terms added.
 Since the (log) predicted citations are all 'offsets', the design matrix is simply an identity matrix, with one term for each self-citation interaction.
 When we already known the design matrix, we can use the function `glm.fit` rather than `glm`, as follows.
 
-```{r glm_fit}
-# X <- Matrix::bdiag(
-#   lapply(rownames(citations), function (x) as.numeric(rownames(citations) == x))
-# )
-# X <- as.data.frame(as.matrix(X))
-# colnames(X) <- make.names(colnames(citations))
-# X$y <- as.vector(citations)
-# 
-# # community_glm_selfcites <- glm.fit(x = as.matrix(X),
-# #                                    y = y,
-# #                                    offset = offset,
-# #                                    family = poisson(),
-# #                                    intercept = FALSE)
-# frmla <- paste('y ~ 0 +', paste(make.names(colnames(citations)),
-#                             collapse = '+'))
-# community_glm_selfcites <- glm(
-#   frmla,
-#   data = X,
-#   offset = log(c(fitted_community)),
-#   family = poisson,
-#   start = runif(47))
-
-get_rss <- function(j) {
+```{r glm_fit, warning = FALSE}
+get_rss <- function(j, self_excess = TRUE) {
   expected <- log(fitted_citations(j, citations, clusters))
   expected[!is.finite(expected)] <- NA
-  mod <- glm(citations[, j] ~ 0 + as.numeric(rownames(citations) == j),
-             offset = expected,
-             family = poisson)
+  excess_self <- as.numeric(rownames(citations) == j)
+  mod <- glm(citations[, j] ~ 0 + excess_self, offset = expected, family = poisson)
+  if (!self_excess) mod <- update(mod, . ~ . - excess_self)
   sum(resid(mod, type = 'pearson')^2, na.rm = TRUE)
 }
 
-for (i in rownames(citations)) {
-  message('Running model for ', i)
-  print(get_rss(i))
-  message('Model fitted without errors for ', i, '\n----------')
-}
-```
+# for (i in rownames(citations)) {
+#   message('Running model for ', i)
+#   print(get_rss(i))
+#   message('Model fitted without errors for ', i, '\n----------')
+# }
 
-1. Errors are thrown when fitting the model for *AmS*.
-2. AoS gets a warning of `fitted rates numerically 0`
-3. An error is thrown when fitting the model for *Bern*.
+community_rss <- vapply(colnames(citations), get_rss, numeric(1))
+community_rss2 <- vapply(colnames(citations), get_rss, numeric(1), self_excess = FALSE)
+plot(community_rss, community_rss2, type = 'n')
+text(community_rss, community_rss2, labels = rownames(citations))
+```
 
