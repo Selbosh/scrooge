@@ -312,13 +312,13 @@ text(community_rss, community_rss2, labels = rownames(citations))
 
 Rather than do everything *ad hoc*, we will, as much as possible, take advantage of `glm`s and the **broom** package.
 
-```{r tidymodel}
+```{r tidymodel, warning = FALSE}
 warning('This bit is not finished yet!')
 njournals <- ncol(citations)
 nearest_profiles <- vapply(colnames(citations), nearest_profile, numeric(njournals),
                            citations = citations, communities = clusters)
 
-nearest_profiles %>%
+models <- nearest_profiles %>%
   as_data_frame %>%
   mutate(to = rownames(citations)) %>%
   gather('from', 'profile', -to) %>%
@@ -326,7 +326,18 @@ nearest_profiles %>%
          logprofile = suppressWarnings(log(profile)),
          logprofile = replace(logprofile, !is.finite(logprofile), NA)) %>%
   group_by(from) %>%
-  do(broom::tidy(glm(citations ~ 0 + as.numeric(to == from),
-                     offset = logprofile, na.action = na.exclude, data = .)))
+  mutate(self_citation = as.numeric(to == from)) %>%
+  do(xs_selfcitations = glm(citations ~ 0 + self_citation,
+                            offset = logprofile, na.action = na.exclude, data = .),
+     null_model = glm(citations ~ 0,
+                      offset = logprofile, na.action = na.exclude, data = .))
+
+models %>%
+  gather('model_type', 'model', xs_selfcitations:null_model) %>%
+  rowwise() %>%
+  broom::augment(model, type.residuals = 'pearson') %>%
+  group_by(from, model_type) %>%
+  summarise(RSS = sum(.resid^2, na.rm = TRUE)) %>%
+  spread(model_type, RSS)
 ```
 
