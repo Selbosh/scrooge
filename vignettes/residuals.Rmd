@@ -12,7 +12,7 @@ vignette: >
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(fig.width = 6, fig.height = 5)
+knitr::opts_chunk$set(fig.width = 6, fig.height = 5, warning = FALSE)
 
 ggqqline <- function(vec, distribution = qnorm, probs = c(.25, .75), ..., na.rm = TRUE) {
   # Replicates stats::qqline in 'ggplot2'
@@ -262,16 +262,14 @@ Again, we may want to control for self-citation rates.
 ## Community residuals controlling for self-citation
 
 Is there a scalable way of doing this without a loop fitting lots of glms?
+Yes: we can take advantage of the **broom** package and use it with **dplyr**.
 
-We want
+We want residual sum of squares for each model, where each model is either
 
-  - residual sum of squares for each model
-  - where each model is either predicted citations
-  - or predicted citations + self-citation component
+- regressing actual citations on community averages
+- regression on community averages, plus a component for (excess) self-citation.
   
-Design matrix?
-
-Compare the null glm:
+Compare the null glm with the calculations currently built into the **scrooge** package:
 
 ```{r community_selfcites}
 hat_citations <- fitted_citations(NULL, citations, clusters)
@@ -279,7 +277,7 @@ community_glm <- glm(c(citations) ~ 0 + offset(log(c(hat_citations))), family = 
 community_glm_resids <- resid(community_glm, type = 'pearson')
 community_scrooge_resids <- profile_residuals(hat_citations, citations)
 
-plot(c(community_scrooge_resids), community_glm_resids)
+plot(c(community_scrooge_resids), community_glm_resids, xlab = 'Scrooge package', ylab = 'Null GLM')
 abline(a = 0, b = 1)
 ```
 
@@ -297,15 +295,10 @@ get_rss <- function(j, self_excess = TRUE) {
   sum(resid(mod, type = 'pearson')^2, na.rm = TRUE)
 }
 
-# for (i in rownames(citations)) {
-#   message('Running model for ', i)
-#   print(get_rss(i))
-#   message('Model fitted without errors for ', i, '\n----------')
-# }
-
 community_rss <- vapply(colnames(citations), get_rss, numeric(1))
 community_rss2 <- vapply(colnames(citations), get_rss, numeric(1), self_excess = FALSE)
-plot(community_rss, community_rss2, type = 'n')
+plot(community_rss, community_rss2, type = 'n',
+     xlab = 'Accounting for self-citations', ylab = 'Community averages only')
 text(community_rss, community_rss2, labels = rownames(citations))
 ```
 
@@ -313,8 +306,7 @@ text(community_rss, community_rss2, labels = rownames(citations))
 
 Rather than do everything *ad hoc*, we will, as much as possible, take advantage of `glm`s and the **broom** package.
 
-```{r tidymodel, warning = FALSE}
-warning('This bit is not finished yet!')
+```{r tidymodel}
 njournals <- ncol(citations)
 nearest_profiles <- vapply(colnames(citations), nearest_profile, numeric(njournals),
                            citations = citations, communities = clusters)
@@ -332,13 +324,48 @@ models <- nearest_profiles %>%
                             offset = logprofile, na.action = na.exclude, data = .),
      null_model = glm(citations ~ 0,
                       offset = logprofile, na.action = na.exclude, data = .))
+```
 
-models %>%
+Having fit each model, we can compute their residuals sums of squares with and without controlling for self-citation.
+
+```{r modelRSS}
+models_RSS <- models %>%
   tidyr::gather('model_type', 'model', xs_selfcitations:null_model) %>%
   rowwise() %>%
   broom::augment(model, type.residuals = 'pearson') %>%
   group_by(from, model_type) %>%
-  summarise(RSS = sum(.resid^2, na.rm = TRUE)) %>%
-  tidyr::spread(model_type, RSS)
+  summarise(RSS = sum(.resid^2, na.rm = TRUE))
+
+models_RSS %>%
+  tidyr::spread(model_type, RSS) %>%
+  ggplot(aes(null_model, xs_selfcitations, label = from)) +
+    geom_text() +
+    scale_x_log10() + scale_y_log10() +
+    labs(x = 'RSS from community averages',
+         y = 'RSS controlling for excessive self-citation',
+         title = 'Comparison of residual sum of squares from two community citation models',
+         subtitle = 'On a log-log scale')
+
+models_RSS %>%
+  mutate(reference_count = colSums(citations)[from]) %>%
+  ggplot(aes(reference_count, RSS,
+             colour = model_type,
+             group = model_type,
+             label = from)) +
+    geom_text() +
+    labs(x = 'Number of outgoing references',
+         title = 'Residual sum of squares against reference count') +
+    theme(legend.position = 'bottom')
+
+models_RSS %>%
+  mutate(article_count = scrooge::articles[from, ]) %>%
+  ggplot(aes(article_count, RSS,
+             colour = model_type,
+             group = model_type,
+             label = from)) +
+    geom_text() +
+    labs(x = 'Number of articles',
+         title = 'Residual sum of squares against article count') +
+    theme(legend.position = 'bottom')
 ```
 
