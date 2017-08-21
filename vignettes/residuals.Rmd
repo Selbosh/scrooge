@@ -113,7 +113,8 @@ Bka_residuals %==% resid(model, type = 'pearson')
 Now that we have calculated some model residuals, we can plot them in the usual way.
 
 ```{r residual_plots}
-suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(ggplot2))
 theme_set(theme_bw())
 
 resids_df <- data_frame(journal = rownames(Bka_residuals),
@@ -321,7 +322,7 @@ nearest_profiles <- vapply(colnames(citations), nearest_profile, numeric(njourna
 models <- nearest_profiles %>%
   as_data_frame %>%
   mutate(to = rownames(citations)) %>%
-  gather('from', 'profile', -to) %>%
+  tidyr::gather('from', 'profile', -to) %>%
   mutate(citations = citations[cbind(to, from)],
          logprofile = suppressWarnings(log(profile)),
          logprofile = replace(logprofile, !is.finite(logprofile), NA)) %>%
@@ -333,11 +334,11 @@ models <- nearest_profiles %>%
                       offset = logprofile, na.action = na.exclude, data = .))
 
 models %>%
-  gather('model_type', 'model', xs_selfcitations:null_model) %>%
+  tidyr::gather('model_type', 'model', xs_selfcitations:null_model) %>%
   rowwise() %>%
   broom::augment(model, type.residuals = 'pearson') %>%
   group_by(from, model_type) %>%
   summarise(RSS = sum(.resid^2, na.rm = TRUE)) %>%
-  spread(model_type, RSS)
+  tidyr::spread(model_type, RSS)
 ```
 

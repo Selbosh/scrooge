@@ -23,7 +23,8 @@ Suggests:
     testthat,
     knitr,
     rmarkdown,
-    tidyverse,
+    dplyr,
+    broom,
     viridis
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)

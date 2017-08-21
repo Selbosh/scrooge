@@ -208,7 +208,8 @@ We can compute these eight clusters' community profiles.
 ```{r, echo = 1, fig.width = 5, fig.height = 8, message = FALSE, fig.align = 'center'}
 profiles47 <- community_profile(citations, clustering)
 
-library(tidyverse)
+library(dplyr)
+library(ggplot2)
 theme_set(theme_minimal())
 
 profiles47 %>%
