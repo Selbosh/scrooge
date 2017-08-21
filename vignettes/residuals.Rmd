@@ -201,14 +201,14 @@ Which journals are cited by Biometrika---or Biometrika's community---least?
 ```{r bottom10bka}
 near_Biometrika %>%
   as.matrix %>% as.data.frame %>%
-  rownames_to_column('journal') %>%
+  mutate(journal = rownames(near_Biometrika)) %>%
   rename(profile = 'V1') %>%
   arrange(profile)
 
 citations[, 'Bka'] %>%
   as.data.frame %>%
   rename(citations = '.') %>%
-  rownames_to_column('journal') %>%
+  mutate(journal = rownames(citations)) %>%
   filter(citations > 0) %>%
   arrange(citations) %>%
   head(n = 10)
