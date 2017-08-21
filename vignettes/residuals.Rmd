@@ -208,7 +208,7 @@ near_Biometrika %>%
 citations[, 'Bka'] %>%
   as.data.frame %>%
   rename(citations = '.') %>%
-  mutate(journal = rownames(citations)) %>%
+  mutate(journal = rownames(scrooge::citations)) %>%
   filter(citations > 0) %>%
   arrange(citations) %>%
   head(n = 10)
