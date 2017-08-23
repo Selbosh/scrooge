@@ -369,3 +369,94 @@ models_RSS %>%
     theme(legend.position = 'bottom')
 ```
 
+# Further investigations
+
+Community residuals seem very high for *Journal of the Royal Statistical Society: Series A* (JRSS-A) and *Technometrics* (Tech)---at least when not accounting for excess self-citation.
+What could be going on here?
+Let's look at their profile residuals.
+
+```{r jrssa}
+resids_jrssa <- data_frame(journal = rownames(citations),
+                           fitted = drop(fitted_citations('JRSS-A', citations, clusters)),
+                           residual = profile_residuals(fitted, citations[, 'JRSS-A']),
+                           q_theo = qqnorm(residual, plot = F)$x)
+
+ggplot(resids_jrssa) +
+  aes(fitted, residual, label = journal) +
+  geom_hline(yintercept = 0, colour = 'steelblue', linetype = 2) +
+  geom_smooth(method = 'loess', colour = 'steelblue', se = FALSE) +
+  geom_text(aes(colour = journal == 'JRSS-A')) +
+  labs(x = 'Predicted citation counts', y = 'Residuals',
+       title = "Profile residuals for 'JRSS-A'") +
+  scale_colour_manual(values = c('black', 'tomato2'), guide = 'none')
+
+ggplot(resids_jrssa) +
+  aes(q_theo, residual, label = journal) +
+  geom_text(aes(colour = journal == 'JRSS-A')) +
+  ggqqline(resids_jrssa$residual) +
+  labs(x = 'Normal quantiles',
+       y = 'Sample quantiles',
+       title = "Profile residuals for 'JRSS-A'") +
+  scale_colour_manual(values = c('black', 'tomato2'), guide = 'none')
+```
+
+```{r tech}
+resids_tech  <- data_frame(journal = rownames(citations),
+                           fitted = drop(fitted_citations('Tech', citations, clusters)),
+                           residual = profile_residuals(fitted, citations[, 'Tech']),
+                           q_theo = qqnorm(residual, plot = F)$x)
+
+ggplot(resids_tech) +
+  aes(fitted, residual, label = journal) +
+  geom_hline(yintercept = 0, colour = 'steelblue', linetype = 2) +
+  geom_smooth(method = 'loess', colour = 'steelblue', se = FALSE) +
+  geom_text(aes(colour = journal == 'Tech')) +
+  labs(x = 'Predicted citation counts', y = 'Residuals',
+       title = "Profile residuals for 'Technometrics'") +
+  scale_colour_manual(values = c('black', 'tomato2'), guide = 'none')
+
+ggplot(resids_tech) +
+  aes(q_theo, residual, label = journal) +
+  geom_text(aes(colour = journal == 'Tech')) +
+  ggqqline(resids_tech$residual) +
+  labs(x = 'Normal quantiles',
+       y = 'Sample quantiles',
+       title = "Profile residuals for 'Technometrics'") +
+  scale_colour_manual(values = c('black', 'tomato2'), guide = 'none')
+```
+
+If we look back at the section **Community residuals controlling for self-citation** then it is clear that the extreme residuals exhibited by *JRSS-A* and *Technometrics* are effective nullified by controlling for excess self-citation.
+
+Look at *JRSS-A* and *Technometrics*' profile residuals when excessive self-citation is added to their respective models:
+
+```{r jrssa_test_self, fig.width = 7, fig.height = 6}
+resids_jrssa_test_self <- models %>%
+  filter(from == 'JRSS-A' | from == 'Tech') %>%
+  tidyr::gather('model_type', 'model', xs_selfcitations:null_model) %>%
+  rowwise() %>%
+  broom::augment(model, type.residuals = 'pearson') %>%
+  group_by(from, model_type) %>%
+  mutate(q_theo = qqnorm(.resid, plot=F)$x,
+         journal = rownames(scrooge::citations))
+
+ggplot(resids_jrssa_test_self) +
+  aes(.fitted, .resid, label = journal) +
+  geom_hline(yintercept = 0, colour = 'steelblue', linetype = 2) +
+  #geom_smooth(method = 'loess', colour = 'steelblue', se = FALSE) +
+  geom_text(aes(colour = is.na(self_citation))) +
+  scale_colour_manual(values = c('black', 'tomato2'), guide = 'none') +
+  facet_grid(model_type ~ from) +
+  labs(x = 'Predicted citation counts', y = 'Residuals',
+       title = "Profile residuals against fitted values for 'JRSS-A' and 'Technometrics'",
+       subtitle = "With and without modelling for excess self-citation")
+
+ggplot(resids_jrssa_test_self) +
+  aes(q_theo, .resid, label = journal) +
+  geom_text(aes(colour = journal == from)) +
+  scale_colour_manual(values = c('black', 'tomato2'), guide = 'none') +
+  facet_grid(model_type ~ from) +
+  labs(x = 'Normal quantiles',
+       y = 'Sample quantiles',
+       title = "QQ plots of profile residuals for 'JRSS-A' and 'Technometrics'",
+       subtitle = "With and without modelling for excess self-citation")
+```
