@@ -12,7 +12,7 @@ vignette: >
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(fig.width = 6, fig.height = 5, warning = FALSE)
+knitr::opts_chunk$set(fig.width = 6, fig.height = 5)
 
 ggqqline <- function(vec, distribution = qnorm, probs = c(.25, .75), ..., na.rm = TRUE) {
   # Replicates stats::qqline in 'ggplot2'
@@ -285,14 +285,14 @@ Now we want a glm with self-citation terms added.
 Since the (log) predicted citations are all 'offsets', the design matrix is simply an identity matrix, with one term for each self-citation interaction.
 When we already known the design matrix, we can use the function `glm.fit` rather than `glm`, as follows.
 
-```{r glm_fit, warning = FALSE}
+```{r glm_fit}
 get_rss <- function(j, self_excess = TRUE) {
   expected <- log(fitted_citations(j, citations, clusters))
   expected[!is.finite(expected)] <- NA
   excess_self <- as.numeric(rownames(citations) == j)
-  mod <- glm(citations[, j] ~ 0 + excess_self, offset = expected, family = poisson)
+  mod <- glm(citations[, j] ~ 0 + excess_self, offset = expected, family = poisson, na.action = na.omit)
   if (!self_excess) mod <- update(mod, . ~ . - excess_self)
-  sum(resid(mod, type = 'pearson')^2, na.rm = TRUE)
+  sum(resid(mod, type = 'pearson')^2)
 }
 
 community_rss <- vapply(colnames(citations), get_rss, numeric(1))
@@ -316,14 +316,16 @@ models <- nearest_profiles %>%
   mutate(to = rownames(citations)) %>%
   tidyr::gather('from', 'profile', -to) %>%
   mutate(citations = citations[cbind(to, from)],
-         logprofile = suppressWarnings(log(profile)),
-         logprofile = replace(logprofile, !is.finite(logprofile), NA)) %>%
+         expected = profile * colSums(scrooge::citations)[from],
+         logexpected = suppressWarnings(log(expected))
+         , logexpected = replace(logexpected, !is.finite(logexpected), NA)
+         ) %>%
   group_by(from) %>%
   mutate(self_citation = as.numeric(to == from)) %>%
-  do(xs_selfcitations = glm(citations ~ 0 + self_citation,
-                            offset = logprofile, na.action = na.exclude, data = .),
-     null_model = glm(citations ~ 0,
-                      offset = logprofile, na.action = na.exclude, data = .))
+  do(xs_selfcitations = glm(citations ~ 0 + self_citation, family = poisson,
+                            offset = logexpected, na.action = na.omit, data = .),
+     null_model = glm(citations ~ 0, family = poisson,
+                      offset = logexpected, na.action = na.omit, data = .))
 ```
 
 Having fit each model, we can compute their residuals sums of squares with and without controlling for self-citation.
@@ -334,15 +336,15 @@ models_RSS <- models %>%
   rowwise() %>%
   broom::augment(model, type.residuals = 'pearson') %>%
   group_by(from, model_type) %>%
-  summarise(RSS = sum(.resid^2, na.rm = TRUE))
+  summarise(RSS = sum(.resid^2))
 
 models_RSS %>%
   tidyr::spread(model_type, RSS) %>%
-  ggplot(aes(null_model, xs_selfcitations, label = from)) +
+  ggplot(aes(y = null_model, x = xs_selfcitations, label = from)) +
     geom_text() +
-    scale_x_log10() + scale_y_log10() +
-    labs(x = 'RSS from community averages',
-         y = 'RSS controlling for excessive self-citation',
+    #scale_x_log10() + scale_y_log10() +
+    labs(y = 'RSS from community averages',
+         x = 'RSS controlling for excessive self-citation',
          title = 'Comparison of residual sum of squares from two community citation models',
          subtitle = 'On a log-log scale')
 
