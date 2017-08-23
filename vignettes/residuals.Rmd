@@ -442,7 +442,7 @@ resids_jrssa_test_self <- models %>%
          journal = rownames(scrooge::citations))
 
 ggplot(resids_jrssa_test_self) +
-  aes(.fitted, .resid, label = journal) +
+  aes(exp(.fitted), .resid, label = journal) +
   geom_hline(yintercept = 0, colour = 'steelblue', linetype = 2) +
   #geom_smooth(method = 'loess', colour = 'steelblue', se = FALSE) +
   geom_text(aes(colour = journal == from)) +
