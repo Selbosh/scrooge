@@ -14,16 +14,6 @@ devtools::install_github('Selbosh/scrooge')
 library(scrooge)
 ```
 
-Verify if two numbers are approximately equal
----------------------------------------------
-
-``` r
-1 %=% 1.0000000000000000001
-#> [1] TRUE
-pi %=% 3.14159
-#> [1] TRUE
-```
-
 Bibliometric datasets
 ---------------------
 
