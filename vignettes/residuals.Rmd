@@ -312,7 +312,7 @@ nearest_profiles <- vapply(colnames(citations), nearest_profile, numeric(njourna
                            citations = citations, communities = clusters)
 
 models <- nearest_profiles %>%
-  as_data_frame %>%
+  dplyr::as_data_frame() %>%
   mutate(to = rownames(citations)) %>%
   tidyr::gather('from', 'profile', -to) %>%
   mutate(citations = citations[cbind(to, from)],
