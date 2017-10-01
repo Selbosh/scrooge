@@ -95,5 +95,5 @@ fitted_citations <- function(idx = NULL, citations, communities, self = TRUE) {
 community_residuals <- function(citations, communities, self = TRUE) {
   pr <- profile_residuals(expected = fitted_citations(NULL, citations, communities, self),
                           observed = citations)
-  colSums(pr^2)
+  colSums(pr^2, na.rm = TRUE)
 }

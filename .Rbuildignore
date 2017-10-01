@@ -6,4 +6,4 @@
 ^README-.*\.png$
 ^\.gitignore$
 ^appveyor\.yml$
-^C:\Users\David\Documents\GitHub\scrooge\docs$
+/docs
