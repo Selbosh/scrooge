@@ -40,7 +40,9 @@ BradleyTerry <- function(C, family = stats::quasibinomial) {
   X[cbind(1:npairs, col(C)[lower.tri(C)])] <- 1
   X[cbind(1:npairs, row(C)[lower.tri(C)])] <- -1
   X <- X[, -1] # First column redundant
-  glm(Y ~ -1 + X, family = family)
+  model <- glm(Y ~ -1 + X, family = family)
+  model$call <- match.call()
+  model
 }
 
 #' Estimate the parameters of a Bradley--Terry model
